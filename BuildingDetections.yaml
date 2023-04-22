@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  SecurityHub:
+    Type: 'AWS::SecurityHub::Hub'
+  LambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: LambaSecurityHubPutFinding
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'securityhub:BatchImportFindings'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:logs:'
+                    - !Ref AWS::Region
+                    - ':'
+                    - !Ref AWS::AccountId
+                    - ':log-group:/aws/lambda/HoneyFileDetection:*'
+              - Effect: Allow
+                Action: 'logs:CreateLogGroup'
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:logs:'
+                    - !Ref AWS::Region
+                    - ':'
+                    - !Ref AWS::AccountId
+                    - ':*'
+  HoneyFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: HoneyFileDetection
+      Code:
+        ZipFile: |
+          import boto3
+          import re
+
+          def lambda_handler(event, context):
+              # Get IP version
+              if bool(re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", event['detail']['sourceIPAddress'])):
+                  ipver = "SourceIpV4"
+              else:
+                  ipver = "SourceIpV6" 
+
+              # Get Account ID
+              client = boto3.client('sts')
+              response = client.get_caller_identity()
+              acctId = response['Account']
+              print(acctId)
+
+              # Check if assumed role and set userName
+              if event['detail']['userIdentity']['type'] == "AssumedRole":
+                  userName = event['detail']['userIdentity']['sessionContext']['sessionIssuer']['userName']
+              elif 'userName' in event['detail']['userIdentity'].keys():
+                  userName = event['detail']['userIdentity']['userName']
+              else:
+                  userName = event['detail']['userIdentity']['arn']
+    
+              # Write finding
+              client = boto3.client('securityhub')
+              client.batch_import_findings(
+                  Findings = [{
+                  "AwsAccountId": acctId,
+                  "CreatedAt": event['detail']['eventTime'],
+                  "Description": "Honey file used",
+                  "GeneratorId": "custom",
+                  "Id": "honeyfile-" + event['detail']['sourceIPAddress'],
+                  "ProductArn": "arn:aws:securityhub:us-east-1:" + acctId + ":product/" + acctId + "/default",
+                  "Resources": [
+                          {
+                              "Id": "arn:aws:s3:::" + event['detail']['requestParameters']['bucketName'] + "/" + event['detail']['requestParameters']['key'],
+                              "Partition": "aws",
+                              "Region": "us-east-1",
+                              "Type" : "AwsS3Bucket"
+                          }
+                      ],
+                  "Network": {
+                          "Direction": "IN",
+                          ipver: event['detail']['sourceIPAddress']
+                      },
+                  "SchemaVersion": "2018-10-08",
+                  "Title": "Honey file used",
+                  "UpdatedAt": event['detail']['eventTime'],
+                  "UserDefinedFields": {
+                      "userName": userName,
+                      "eventName": event['detail']['eventName']
+                  },
+                  "Types": [
+                          "Effects/Data Exfiltration",
+                          "TTPs/Collection",
+                          "Unusual Behaviors/User"
+                      ],
+                  "Severity": {
+                      "Label": "CRITICAL",
+                      "Original": "CRITICAL"
+                      }
+                  }]
+                  )
+
+              return {
+                  'statusCode': 200,
+                  'body': "Success!"
+              }
+      Handler: index.lambda_handler
+      Runtime: python3.9
+      Role: !GetAtt LambdaRole.Arn
+  SensitiveBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join
+        - ''
+        - - 'databackup-'
+          - !Ref 'AWS::AccountId'
