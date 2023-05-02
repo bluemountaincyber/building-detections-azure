@@ -78,6 +78,26 @@ Description of the second challenge with a table
 | `userIdentity.userName` | The AWS username (IAM user) or account alias |
 | `sourceIPAddress` | The client IP address |
 
+CSS classes for the pages
+
+* img.w100 { width:100px; }
+* img.w150 { width:150px; }
+* img.w200 { width:200px; }
+* img.w250 { width:250px; }
+* img.w300 { width:300px; }
+* img.w350 { width:350px; }
+* img.w400 { width:400px; }
+* img.w450 { width:450px; }
+* img.w500 { width:500px; }
+* img.w550 { width:550px; }
+* img.w600 { width:600px; }
+* img.w650 { width:650px; } 
+
+And some nice pictures, this one is in w300 and w600
+
+![](../img/1.png ""){: class="w300" }
+![](../img/1.png ""){: class="w600" }
+
 
 ## Conclusion
 
