@@ -1,4 +1,14 @@
-# Exercise 2: API Event Logging
+## DevNotes
+
+### ToDo
+- [X] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Commands / Scripts
+- [ ] Provide Screenshots
+
+-----
+
+# Exercise 2: Configuring Logging
 
 <!-- markdownlint-disable MD007 MD033-->
 
@@ -13,9 +23,8 @@
 
 ## Objectives
 
-* Research ATT&CK Technique T1078.004 detections and discover an approach to use in your AWS account
-* Create log collection S3 bucket
-* Enable CloudTrail trail capturing management and data events
+* Research ATT&CK Technique T1078.004 detections and discover an approach to use in your Azure tenant
+* Configure logging of blob storage operations and shipping to Log Analytics workspace
 
 ## Challenges
 
@@ -29,7 +38,7 @@ Review [MITRE ATT&CK Technique T1078.004](https://attack.mitre.org/techniques/T1
 
     2. The first few paragraphs explain how cloud accounts can be leveraged by an attacker to access, manipulate, or even damage cloud resources.
 
-        ![](../img/8.png ""){: class="w400" }
+        ![](../img/8.png ""){: class="w600" }
 
     3. In the **Procedure Examples**, you will see the known threat groups that have used this technique and how it was used to their advantage.
 

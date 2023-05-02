@@ -1,4 +1,14 @@
-# Exercise 3: Attacking the Cloud Account
+## DevNotes
+
+### ToDo
+- [X] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Commands / Scripts
+- [ ] Provide Screenshots
+
+-----
+
+# Exercise 3: Creating True-Positive Events 
 
 <!-- markdownlint-disable MD033-->
 
@@ -13,8 +23,8 @@
 
 ## Objectives
 
-* Act as an attacker in the following ways to generate log data which will help build your detection and automation:
-    * Perform discovery of S3 resources - ATT&CK Technique T1619 (Cloud Storage Object Discovery)
+* Execute the following techniques to generate true-positive log entries which will help build your detection and automation:
+    * Perform discovery of blob storage resources - ATT&CK Technique T1619 (Cloud Storage Object Discovery)
     * Download an interesting file - ATT&CK Technique T1530 (Data from Cloud Storage)
 
 ## Challenges

@@ -1,4 +1,14 @@
-# Exercise 5: Building an Automated Detection
+## DevNotes
+
+### ToDo
+- [X] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Commands / Scripts
+- [ ] Provide Screenshots
+
+-----
+
+# Exercise 5: Testing the Detection Rule & Automation
 
 <!-- markdownlint-disable MD007 MD033-->
 
@@ -12,19 +22,13 @@
 **Estimated Time to Complete:** 20 minutes
 
 ## Objectives
+* Perform T1530 (Data from Cloud Storage) with a different user once more to trigger the Scheduled Rule
+* View the Azure Logic Apps while we wait for the Schedule Rule to trigger
+* Review the Incident created by the Scheduled Rule and verify the enrichment automation
 
-Below is the overall automated detection that we are building:
+**Bonus:**
 
-![](../img/42.png ""){: class="w600" }
-
-There is one component missing: the **EventBridge** rule that links this all together!
-
-Your objectives:
-
-* View the Lambda function that will handle the event
-* Create an AWS EventBridge rule to capture a CloudTrail data events involving your `password-backup` honey file and trigger a Lambda function called `HoneyFileDetection`
-* Perform T1530 (Data from Cloud Storage) once more to trigger this automation
-* Review Security Hub to find your automated detection
+* Manually trigger the automation to invalidate the attackers refresh tokens
 
 ## Challenges
 

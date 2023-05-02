@@ -1,3 +1,13 @@
+## DevNotes
+
+### ToDo
+- [ ] Create tear-down script
+- [ ] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Screenshots
+
+-----
+
 # Exercise 6: Tearing Down Serverless Application
 
 **Estimated time to complete:** 5 minutes

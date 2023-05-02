@@ -1,3 +1,39 @@
+## DevNotes
+
+### ToDo
+- [ ] Create deployment script
+- [ ] Create content for StorageAccount
+- [ ] Create Sentinel Analytics rule 
+- [ ] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Screenshots
+
+### Resource to be deployed
+- Resource-Group
+- User
+	- 'Victim' user
+- Storage Account
+	- Blob Containers
+		- Upload files/folders including HoneyFile 
+- LogAnalyticsWorkspace
+- Sentinel
+	- Import deactivated Analytics Rule
+	- Permission for Sentinel to run Automation
+- Logic Apps
+	- SentinelIncident-Trigger
+		- Managed Identity for Sentinel
+		- Permission for Azure AD
+	- SentinelEntity-Trigger
+		- Managed Identity for Sentinel
+		- Permission for Azure AD
+
+### To be configured by student in the lab
+- Cloud Shell
+- Metrics from StorageAccount to LogAnalytics	
+- Automation in Sentinel to trigger Logic App when incident is created
+
+-----
+
 # Exercise 1: Deploying the Workshop Resources
 
 **Estimated time to complete:** 15 minutes

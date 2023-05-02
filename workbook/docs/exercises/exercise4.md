@@ -1,4 +1,13 @@
-# Exercise 4: Detecting the Attack
+## DevNotes
+
+### ToDo
+- [X] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Commands / Scripts
+- [ ] Provide Screenshots
+-----
+
+# Exercise 4: Creating the Detection Rule & Automation
 
 <!-- markdownlint-disable MD033-->
 
@@ -9,13 +18,13 @@
 }
 </style>
 
-**Estimated Time to Complete:** 15 minutes
+**Estimated Time to Complete:** 30 minutes
 
 ## Objectives
 
-* Discover where the CloudTrail data is being written to within the `cloudlogs-` S3 bucket
-* Download just today's data to your CloudShell session
-* Analyze the data looking for all API calls made related to the download of the honey file
+* Discover where the blob storage logs are located in Sentinel 
+* Write a KQL query to find our access of the honeyfile  
+* Create a Scheduled query rule leveraging automation for alert enrichment 
 
 ## Challenges
 
