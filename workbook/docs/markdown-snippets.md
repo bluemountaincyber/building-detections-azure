@@ -1,4 +1,11 @@
-# Exercise 1: Markdown Snippets
+# Search&Replace Terms
+Alex: `<!---ALEX:$WHAT_TO_DO--->`
+<!---ALEX:$WHAT_TO_DO--->
+
+Ryan: `<!---RYAN:$WHAT_TO_DO--->`
+<!---RYAN:$WHAT_TO_DO--->
+
+# Markdown Snippets
 
 ## Challenges
 
