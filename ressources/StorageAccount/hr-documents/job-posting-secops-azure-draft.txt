@@ -1,0 +1,19 @@
+Are you a passionate and experienced cyber security engineer who loves solving complex problems and protecting valuable data? Do you have a strong background in Azure cloud services and security best practices? Do you want to work with one of the most brilliant and famous detectives in the world?
+
+If you answered yes to all these questions, then we have an exciting opportunity for you! We are looking for a senior cyber security engineer to join our team and help us secure our Azure environment and our clients' data. You will be working closely with Sherlock Holmes, the legendary consulting detective who has solved some of the most challenging and mysterious cases in history. You will be responsible for designing, implementing, testing, and maintaining security solutions for our Azure infrastructure and applications. You will also be involved in conducting security audits, threat analysis, incident response, and forensic investigations.
+
+To be successful in this role, you will need to have:
+
+- A bachelor's degree or higher in computer science, cyber security, or a related field
+- At least 5 years of professional experience as a cyber security engineer or a similar role
+- Expert knowledge of Azure cloud services and security features, such as Azure Active Directory, Azure Security Center, Azure Sentinel, Azure Key Vault, Azure Firewall, etc.
+- Proficient in scripting languages such as PowerShell, Python, or Bash
+- Familiar with security frameworks and standards such as NIST, ISO, PCI-DSS, etc.
+- Excellent communication and collaboration skills
+- A keen eye for detail and a strong analytical mind
+- A curiosity and enthusiasm for learning new skills and technologies
+- A willingness to travel occasionally and work on-site with our clients
+
+This is a rare and rewarding chance to work with one of the most renowned and respected figures in the field of detective work. You will be part of a dynamic and diverse team that values innovation, creativity, and excellence. You will also enjoy a competitive salary and benefits package, as well as flexible working hours and a supportive work environment.
+
+If you are interested in this position, please send your resume and cover letter to sherlock@holmes.com. Please include your expected salary range and availability. We look forward to hearing from you soon!
