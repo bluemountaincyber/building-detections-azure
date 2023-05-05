@@ -8,12 +8,27 @@
 - [ ] Write Exercise text
 - [ ] Provide Screenshots
 
+### Required from the student
+- Azure Tenant
+    - Should/can we link them to the sign-up page for a tenant?
+- Separate subscription (?)
+- 'Main' user account
+    - Assigned Roles
+        - Global Administrator (?)
+
 ### Resource to be deployed
-- Resource-Group
+- Resource-Group 
 - User
-	- 'Victim' user
+	- New 'Victim' user
+    	- Attributes should make it look like a HR person
+        - AD Roles assignments
+            - 'Reader' on the storage account
+            - 'Storage Blob Data Reader' on the storage account  
+    - 'Main' user account
+        - AD Roles assignments
+            - 'Storage Blob Data Reader' on the storage account
 - Storage Account
-	- Blob Containers
+	- Blob Containers (hr-documents / secretdata)
 		- Upload files/folders including HoneyFile 
 - LogAnalyticsWorkspace
 - Sentinel
