@@ -22,174 +22,107 @@
 
 ## Objectives
 
-* Discover where the blob storage logs are located in Sentinel 
+* Discover where the blob storage events are located in Sentinel 
 * Write a KQL query to find our access of the honeyfile  
 * Create a Scheduled query rule leveraging automation for alert enrichment 
 
 ## Challenges
 
-### Challenge 1: Discover CloudTrail Data Location
+### Challenge 1: Analyze Storage Logs with Sentinel
 
-Using your CloudShell session, sift through your `cloudlogs-` S3 bucket to discover how the CloudTrail data is written to your S3 bucket. What kind of format is this data stored in?
-
-??? cmd "Solution"
-
-    1. Re-open your CloudShell session if it has closed.
-
-    2. Since you'll be crafting several commands targeting your S3 bucket, create an environment variable consisting of the bucket name called `LOGBUCKET` like so:
-
-        ```bash
-        export LOGBUCKET=$(aws s3api list-buckets --query \
-          "Buckets[? contains(Name,'cloudlogs-')].Name" --output text)
-        echo "The log bucket is: $LOGBUCKET"
-        ```
-
-        !!! summary "Sample result"
-
-            ```bash
-            The log bucket is: cloudlogs-123456789010
-            ```
-
-    3. Now, use the AWS CLI to view the root of that bucket.
-
-        ```bash
-        aws s3 ls s3://$LOGBUCKET/
-        ```
-
-        !!! summary "Expected result"
-
-            ```bash
-                                       PRE AWSLogs/
-            ```
-
-    4. Looks like just a single folder called `AWSLogs/`. Now see what is in that folder.
-
-        ```bash
-        aws s3 ls s3://$LOGBUCKET/AWSLogs/
-        ```
-
-        !!! summary "Expected result"
-
-            ```bash
-                                       PRE 123456789010/
-            ```
-
-    5. Those contents should be a folder that match your AWS account number. Now see what is in that folder.
-
-        ```bash
-        export ACCTNUM=$(aws sts get-caller-identity --query Account --output text)
-        aws s3 ls s3://$LOGBUCKET/AWSLogs/$ACCTNUM/
-        ```
-
-        !!! summary "Expected result"
-
-            ```bash
-                                       PRE CloudTrail-Digest/
-                                       PRE CloudTrail/
-            ```
-
-    6. Further down the rabbit hole, we found two folders: `CloudTrail-Digest/` and `CloudTrail/`. Since we left the **Log file validation** setting on, AWS is hashing our log data and storing these hash values for each entry in the `CloudTrail-Digest` folder. This is useful to identify any modified log data. The event data itself is stored in the `CloudTrail/` folder. Take a look inside that folder.
-
-        ```bash
-        aws s3 ls s3://$LOGBUCKET/AWSLogs/$ACCTNUM/CloudTrail/
-        ```
-
-        !!! summary "Sample result"
-
-            ```bash
-                                       PRE us-east-1/
-            2023-03-18 11:37:56          0
-            ```
-
-    7. In this folder, you probably found one or more other folders with names of a valid AWS region. Since we were performing our attacker behaviors in the `us-east-1` region, see what is in that folder.
-
-        ```bash
-        aws s3 ls s3://$LOGBUCKET/AWSLogs/$ACCTNUM/CloudTrail/us-east-1/
-        ```
-
-        !!! summary "Sample result"
-
-            ```bash
-                                       PRE 2023/
-            ```
-
-    8. The next folder down is the year. Now, you could repeat this a few more times, but we'll save you the trouble: under this folder is another folder with the number of the month (e.g., `03/`), then the day of the month (e.g., `18/`), and then finally the CloudTrail data. To get to the data for today, here's a cheat:
-
-        ```bash
-        DATE=$(date +"%Y/%m/%d")
-        aws s3 ls s3://$LOGBUCKET/AWSLogs/$ACCTNUM/CloudTrail/us-east-1/$DATE/
-        ```
-
-        !!! summary "Sample result"
-
-            ```bash
-            2023-03-18 11:49:49       4536 123456789010_CloudTrail_us-east-1_20230318T1035Z_dksdeM5YJ305GQqr.json.gz
-            2023-03-18 11:44:06       1696 123456789010_CloudTrail_us-east-1_20230318T1145Z_hya7foJGvajqVkrL.json.gz
-            2023-03-18 11:49:17       1455 123456789010_CloudTrail_us-east-1_20230318T1150Z_HfyMXO29h8phuMgw.json.gz
-            2023-03-18 11:54:26       2574 123456789010_CloudTrail_us-east-1_20230318T1155Z_GzmUZDpzTamyk5q3.json.gz
-            2023-03-18 11:59:15        756 123456789010_CloudTrail_us-east-1_20230318T1155Z_l71CvCGGtNrtFQYd.json.gz
-            2023-03-18 11:59:37       2125 123456789010_CloudTrail_us-east-1_20230318T1200Z_XfRqC4uM9ZAmMPH7.json.gz
-            2023-03-18 12:07:06        666 123456789010_CloudTrail_us-east-1_20230318T1205Z_yOQrfO2eVslVrhHL.json.gz
-
-            <snip>
-            ```
-
-    9. As you can see, every 5 minutes or so, one or more GZIP-compressed JSON files are being created. This is the data we are interested in to discover our attacer's actions.
-
-### Challenge 2: Download Today's Events
-
-Now that you have the location of the CloudTrail data, download just today's data to your CloudShell session in a folder called `cloudtrail-logs` in your home directory.
+Use Microsoft Sentinel to explore the data being forwarded from our blob storage into the Log Analytic workspace.
 
 ??? cmd "Solution"
 
-    1. Begin by creating a folder in your CloudShell session to store this data.
+    1. In your Azure Portal, navigate to the Microsoft Sentinel service and select the instance based on the `securitymonitoring` Log Analytics workspace.
+    <!---ALEX:$SCREENSHOT--->
 
-        ```bash
-        mkdir /home/cloudshell-user/cloudtrail-logs
-        ```
+    2. In the ´General´ section on the left panel, select the `Logs` blade. Should you be greeted by the `Queries` dialog, deactivate the `Always show Queries` toggle and close the dialog with the `X` in the upper right corner.  
+    <!---ALEX:$SCREENSHOT--->
+
+    3. With the `Logs` blade in front of you, we need to find the table in which our blob storage events are stored: Select the `Tables` tab, open the `LogManagement` node and look for the aptly named `StorageBlobLogs` table.
+    <!---ALEX:$SCREENSHOT--->
+    
+        !!! warning
+
+            If there is no table with this name, the most likely causes are:
+                
+            1. The diagnostic setting were not properly applied
+            
+                Check the diagnostic setting for your blob storage from exercise 2 and make sure to select the `securitymonitoring` Log Analytics workspace.
+            
+            2. Events did not yet arrive in the Log Analytics workspace
+    
+                It can take a few minutes for events to arrive and be ingested. Use the time to double-check your diagnostic setting for the blob storage and return to Sentinel later. Don´t forget to reload your browser tab should you use multiple tabs! 
+        
+    4. Either double click on the `StorageBlobLogs` table to load it into the editor, or type out the name of the table yourself. Set the Time range to `Last 4 hours` and press the `Run` button.
+    
+        <!---ALEX:$SCREENSHOT--->
 
         !!! summary "Expected result"
 
-            This command does not have output.
+            <!---ALEX:$SCREENSHOT--->
+    
+    
+    5. Thats already quite some events! Let´s use [KQL](https://learn.microsoft.com/en-us/azure/data-explorer/kql-quick-reference) and the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/storagebloblogs) to get a better understanding of our data.   
 
-    2. Next, use the `aws s3 cp` command to download all of today's CloudTrail data.
-
-        ```bash
-        aws s3 cp s3://$LOGBUCKET/AWSLogs/$ACCTNUM/CloudTrail/us-east-1/$DATE/ \
-          /home/cloudshell-user/cloudtrail-logs --recursive
+        ```kql
+            <!---ALEX:$QUERYS--->
         ```
 
-        !!! summary "Sample results"
+        !!! summary "Sample result"
 
-            ```bash
-            download: s3://cloudlogs-123456789010/AWSLogs/123456789010/CloudTrail/us-east-1/2023/03/18/123456789010_CloudTrail_us-east-1_20230318T1150Z_HfyMXO29h8phuMgw.json.gz to cloudtrail-logs/123456789010_CloudTrail_us-east-1_20230318T1150Z_HfyMXO29h8phuMgw.json.gz
-            download: s3://cloudlogs-123456789010/AWSLogs/123456789010/CloudTrail/us-east-1/2023/03/18/123456789010_CloudTrail_us-east-1_20230318T1035Z_dksdeM5YJ305GQqr.json.gz to cloudtrail-logs/123456789010_CloudTrail_us-east-1_20230318T1035Z_dksdeM5YJ305GQqr.json.gz
-            download: s3://cloudlogs-123456789010/AWSLogs/123456789010/CloudTrail/us-east-1/2023/03/18/123456789010_CloudTrail_us-east-1_20230318T1155Z_GzmUZDpzTamyk5q3.json.gz to cloudtrail-logs/123456789010_CloudTrail_us-east-1_20230318T1155Z_GzmUZDpzTamyk5q3.json.gz
-            download: s3://cloudlogs-123456789010/AWSLogs/123456789010/CloudTrail/us-east-1/2023/03/18/123456789010_CloudTrail_us-east-1_20230318T1145Z_hya7foJGvajqVkrL.json.gz to cloudtrail-logs/123456789010_CloudTrail_us-east-1_20230318T1145Z_hya7foJGvajqVkrL.json.gz
+            <!---ALEX:$SCREENSHOT--->
 
-            <snip>
-            ```
+    6. At this point we should have a fair understanding of how the data is structured. Great! Now let´s make sure that we can see read events in the data.  
 
-    3. Ensure that the data downloaded properly by reviewing the contents of the `/home/cloudshell-user/cloudtrail-logs` directory.
-
-        ```bash
-        ls /home/cloudshell-user/cloudtrail-logs
+        ```kql
+            <!---ALEX:$QUERYS--->
         ```
 
-        !!! summary "Sample results"
+        !!! summary "Sample result"
 
-            ```bash
-            123456789010_CloudTrail_us-east-1_20230318T1035Z_dksdeM5YJ305GQqr.json.gz
-            123456789010_CloudTrail_us-east-1_20230318T1145Z_hya7foJGvajqVkrL.json.gz
-            123456789010_CloudTrail_us-east-1_20230318T1150Z_HfyMXO29h8phuMgw.json.gz
-            123456789010_CloudTrail_us-east-1_20230318T1155Z_GzmUZDpzTamyk5q3.json.gz
+            <!---ALEX:$SCREENSHOT--->
 
-            <snip>
-            ```
+### Challenge 2: Write a Detection Query in KQL
 
-### Challenge 3: Detect Honey File Usage
+We now have the knowledge of `StorageBlobLogs` table structure, an true-positive event in the dataset, and the power of KQL at our fingertips! Build a robust query which can be turned into a Scheduled Analytics Rule, and make sure the [Account Entity](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#user-account) can be extracted from the alert.     
 
-Review the CloudTrail data looking for evidence of the `password-backup.txt` honey file being accessed.
+??? cmd "Solution"
+
+    1. First, refine the query to only find `GetBlob` operations on the honey file in the `secretdata` container of the storage account starting with `productiondatamain`. Verify you get results at this stage.
+
+        ```kql
+            <!---ALEX:$QUERYS--->
+        ```
+
+        !!! summary "Sample result"
+
+            <!---ALEX:$SCREENSHOT--->
+
+    2. That query would actually already suffice to detect any download of the honey file! However, our goal in this workshop is finding access by Azure AD User Accounts only - investigating storage access authorized via Shared Access Signatures would require forwarding of additional logs unavailable on the free tier. So lets filter on the that.
+
+        ```kql
+            <!---ALEX:$QUERYS--->
+        ```
+
+        !!! summary "Sample result"
+
+            <!---ALEX:$SCREENSHOT--->
+
+    3. To later configure our Entities in the Scheduled Analytics Rule, we need to surface identifiers for the user account. As stated in the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#user-account), the ObjectGUID of the user would already suffice to uniquely identify the Azure AD User Account. But let´s nevertheless surface the name and tenantId in addition to the objectGuid to practice KQL. 
+
+        ```kql
+            <!---ALEX:$QUERYS--->
+        ```
+
+        !!! summary "Sample result"
+
+            <!---ALEX:$SCREENSHOT--->
+
+### Challenge 3: Create a Scheduled Query Rule with Automation
+
+With your detection query at hand, create a Scheduled Query Rule with an entity mapping for the User Account and triggers the playbook `SentinelIncident-GetEntityInformation` via an incident trigger. 
 
 ??? cmd "Solution"
 
