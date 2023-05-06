@@ -56,14 +56,16 @@ Review [MITRE ATT&CK Technique T1078.004](https://attack.mitre.org/techniques/T1
 
 ### Challenge 2: Configure logging and forwarding of blob storage events
 
-To be able to track usage of a honey file, we must monitor when it is accessed. This is done by creating a diagnostic setting on our blob storage resource. A diagnostic setting - in Microsofts own words -  "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to". In our case we want the `StorageRead` log category and send it to a Log Analytics workspace, which we configure via the Azure Portal GUI.
+To be able to track usage of a honey file, we must monitor when it is accessed. This is done by creating a diagnostic setting on our blob storage resource.
+
+A diagnostic setting - in Microsofts own words -  "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to". In our case we want the `StorageRead` log category and send it to a Log Analytics workspace, which we configure via the Azure Portal GUI.
 
 ??? cmd "Solution"
 
     1. From the Azure Portal homepage, navigate to the storage account service and select the workshop storage account. Should you not see the storage account, make sure that no filter is applied for `Subscription`, `Resource group`, and `Location`.
     <!---ALEX:$SCREENSHOT--->
 
-    2. With the storage account selected, navigate to the `Monitoring` section on the left sidebar and select `Diagnostic settings`. Clicking on the line with the `blob` resource will bring you to the diagnostic settings of the blob, which should be empty at this stage of the workshop.
+    2. With the storage account selected, navigate to the `Monitoring` section on the left sidebar and select the `Diagnostic settings` blade. Clicking on the line with the `blob` resource in the main pane will bring you to the diagnostic settings of the blob, which should be empty at this stage of the workshop.
     <!---ALEX:$SCREENSHOT--->
 
     3. Click the `Add diagnostic setting` link and you will be prompted to supply a `Diagnostic setting name`, a selection of what Logs/Metrics should be collected, and the destination for said Logs/Metrics.
