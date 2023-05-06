@@ -58,7 +58,9 @@ Review [MITRE ATT&CK Technique T1078.004](https://attack.mitre.org/techniques/T1
 
 To be able to track usage of a honey file, we must monitor when it is accessed. This is done by creating a diagnostic setting on our blob storage resource.
 
-A diagnostic setting - in Microsofts own words -  "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to". In our case we want the `StorageRead` log category and send it to a Log Analytics workspace, which we configure via the Azure Portal GUI.
+A diagnostic setting - in Microsofts own words - "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to".
+
+In our case we could make due with only the `StorageRead` log category, but let us collect all the logs and metrics of this resource so we can see everything that is happening. To make searching and alerting on those events easier, we will send them into a Log Analytics workspace. Let´s configure this via the Azure Portal GUI.
 
 ??? cmd "Solution"
 
@@ -71,9 +73,9 @@ A diagnostic setting - in Microsofts own words -  "specifies a list of categorie
     3. Click the `Add diagnostic setting` link and you will be prompted to supply a `Diagnostic setting name`, a selection of what Logs/Metrics should be collected, and the destination for said Logs/Metrics.
     <!---ALEX:$SCREENSHOT--->
 
-    4. We only require the `StorageRead` logs and want them being send to our `Log Analytics workspace`. For the name, `Log-StorageRead-LogAnalytics` should suffice. After pressing the `Save` button on the upper left corner you will be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
+    4. We select all logs and metrics, and want them being send to our `Log Analytics workspace`. For the name, `AllEvents-LogAnalytics` should suffice. After pressing the `Save` button on the upper left corner you will be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
     <!---ALEX:$SCREENSHOT--->
 
 ## Conclusion
 
-You are now logging and forwarding all read events for this particular blob. In the next exercise, you will verify that the log and forwarding is working by accessing the honey file.
+You are now logging and forwarding all events for this particular blob storage. In the next exercise, you will verify that the log and forwarding is working by accessing the honey file.
