@@ -12,21 +12,21 @@
 - Azure Tenant
     - Should/can we link them to the sign-up page for a tenant?
 - Separate subscription (?)
-- 'Main' user account
+- "Main" user account
     - Assigned Roles
         - Global Administrator (?)
 
 ### Resource to be deployed
 - Resource-Group 
 - User
-	- New 'Victim' user
+	- New "Victim" user
     	- Attributes should make it look like a HR person
         - AD Roles assignments
-            - 'Reader' on the storage account
-            - 'Storage Blob Data Reader' on the storage account  
-    - 'Main' user account
+            - `Reader` on the storage account
+            - `Storage Blob Data Reader` on the storage account  
+    - "Main" user account
         - AD Roles assignments
-            - 'Storage Blob Data Reader' on the storage account
+            - `Storage Blob Data Reader` on the storage account
 - Storage Account
 	- Blob Containers (hr-documents / secretdata)
 		- Upload files/folders including HoneyFile 
@@ -34,6 +34,7 @@
 - Sentinel
 	- Import deactivated Analytics Rule
 	- Permission for Sentinel to run Automation
+    	- `Microsoft Sentinel Automation Contributor` for `Azure Security Insights` on ResourceGroup
 - Logic Apps
 	- SentinelIncident-Trigger
 		- Managed Identity for Sentinel
