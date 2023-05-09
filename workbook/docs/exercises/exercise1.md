@@ -19,8 +19,8 @@
 ### Resource to be deployed
 - Resource-Group 
 - User
-	- New "Victim" user
-    	- Attributes should make it look like a HR person
+	- New "Victim" service principal
+    	- Attributes should make it look like a storage service account
         - AD Roles assignments
             - `Reader` on the storage account
             - `Storage Blob Data Reader` on the storage account  
@@ -35,18 +35,12 @@
 	- Import deactivated Analytics Rule
 	- Permission for Sentinel to run Automation
     	- `Microsoft Sentinel Automation Contributor` for `Azure Security Insights` on ResourceGroup
-- Logic Apps
-	- SentinelIncident-Trigger
-		- Managed Identity for Sentinel
-		- Permission for Azure AD
-	- SentinelEntity-Trigger
-		- Managed Identity for Sentinel
-		- Permission for Azure AD
+
 
 ### To be configured by student in the lab
 - Cloud Shell
 - Metrics from StorageAccount to LogAnalytics	
-- Automation in Sentinel to trigger Logic App when incident is created
+- Automation in Sentinel to add Tasks to the incidient
 
 -----
 
