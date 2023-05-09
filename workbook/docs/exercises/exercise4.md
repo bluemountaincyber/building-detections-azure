@@ -2,7 +2,7 @@
 
 ### ToDo
 - [X] Write Objective text
-- [ ] Write Exercise text
+- [X] Write Exercise text
 - [ ] Provide Commands / Scripts
 - [ ] Provide Screenshots
 -----
