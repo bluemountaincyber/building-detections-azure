@@ -4,7 +4,7 @@
 - [X] Write Objective text
 - [X] Write Exercise text
 - [ ] Provide Commands / Scripts
-- [ ] ~~Provide Screenshots~~
+- [ ] Provide Screenshots
 
 -----
 
@@ -19,7 +19,7 @@
 }
 </style>
 
-**Estimated Time to Complete:** 10 minutes
+**Estimated Time to Complete:** 20 minutes
 
 ## Objectives
 
@@ -32,10 +32,6 @@
 ### Challenge 1: Perform ATT&CK Technique T1619 (Cloud Storage Object Discovery)
 
 Using the Azure Cloud Shell, perform reconnaissance of the storage account and the content of its blob containers. You will find that one has some interestingly named data that an attacker may be tempted to download.
-
-??? info "Using the GUI instead"
-
-    This step can also be done via the Azure Portal. However, be aware which credentials are being used when downloading the blob! Make sure the portal is using your Azure AD Login and not the access keys to which it might default to. The mode of access can be seen and changed in the GUI like this: <!---ALEX:screenshot/GIF---> 
 
 ??? cmd "Solution"
 
