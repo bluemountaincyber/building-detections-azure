@@ -65,16 +65,20 @@ In our case we could make due with only the `StorageRead` log category, but let 
 ??? cmd "Solution"
 
     1. From the Azure Portal homepage, navigate to the storage account service and select the workshop storage account. Should you not see the storage account, make sure that no filter is applied for `Subscription`, `Resource group`, and `Location`.
-    <!---ALEX:$SCREENSHOT--->
+    
+        ![](../img/placeholder.png ""){: class="w600" }
 
     2. With the storage account selected, navigate to the `Monitoring` section on the left sidebar and select the `Diagnostic settings` blade. Clicking on the line with the `blob` resource in the main pane will bring you to the diagnostic settings of the blob, which should be empty at this stage of the workshop.
-    <!---ALEX:$SCREENSHOT--->
+    
+        ![](../img/placeholder.png ""){: class="w600" }
 
     3. Click the `Add diagnostic setting` link and you will be prompted to supply a `Diagnostic setting name`, a selection of what Logs/Metrics should be collected, and the destination for said Logs/Metrics.
-    <!---ALEX:$SCREENSHOT--->
+    
+        ![](../img/placeholder.png ""){: class="w600" }
 
     4. We select all logs and metrics, and want them being send to our `Log Analytics workspace`. For the name, `AllEvents-LogAnalytics` should suffice. After pressing the `Save` button on the upper left corner you will be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
-    <!---ALEX:$SCREENSHOT--->
+    
+        ![](../img/placeholder.png ""){: class="w600" }
 
 ## Conclusion
 
