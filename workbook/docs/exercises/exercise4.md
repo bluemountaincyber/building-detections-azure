@@ -24,7 +24,9 @@
 
 * Discover where the blob storage events are located in Sentinel 
 * Write a KQL query to find our access of the honeyfile  
-* Create a Scheduled query rule leveraging automation for alert enrichment 
+* Create a Scheduled query rule based on the KQL query
+* Configure an Automation to assist security analysts in their investigation
+
 
 ## Challenges
 
@@ -35,13 +37,15 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
 ??? cmd "Solution"
 
     1. In your Azure Portal, navigate to the Microsoft Sentinel service and select the instance based on the `securitymonitoring` Log Analytics workspace.
-    <!---ALEX:$SCREENSHOT--->
+        
+        ![](../img/placeholder.png ""){: class="w600" }
 
     2. In the ´General´ section on the left panel, select the `Logs` blade. Should you be greeted by the `Queries` dialog, deactivate the `Always show Queries` toggle and close the dialog with the `X` in the upper right corner.  
-    <!---ALEX:$SCREENSHOT--->
+        ![](../img/placeholder.png ""){: class="w600" }
 
     3. With the `Logs` blade in front of you, we need to find the table in which our blob storage events are stored: Select the `Tables` tab, open the `LogManagement` node and look for the aptly named `StorageBlobLogs` table.
-    <!---ALEX:$SCREENSHOT--->
+        
+        ![](../img/placeholder.png ""){: class="w600" }
     
         !!! warning
 
@@ -57,11 +61,11 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
         
     4. Either double click on the `StorageBlobLogs` table to load it into the editor, or type out the name of the table yourself. Set the Time range to `Last 4 hours` and press the `Run` button.
     
-        <!---ALEX:$SCREENSHOT--->
+        ![](../img/placeholder.png ""){: class="w600" }
 
-        !!! summary "Expected result"
+        ??? summary "Sample result"
 
-            <!---ALEX:$SCREENSHOT--->
+            ![](../img/placeholder.png ""){: class="w600" }
     
     
     5. Thats already quite some events! Let´s use [KQL](https://learn.microsoft.com/en-us/azure/data-explorer/kql-quick-reference) and the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/storagebloblogs) to get a better understanding of our data.   
@@ -70,9 +74,9 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
             <!---ALEX:$QUERYS--->
         ```
 
-        !!! summary "Sample result"
+        ??? summary "Sample result"
 
-            <!---ALEX:$SCREENSHOT--->
+            ![](../img/placeholder.png ""){: class="w600" }
 
     6. At this point we should have a fair understanding of how the data is structured. Great! Now let´s make sure that we can see read events in the data.  
 
@@ -80,13 +84,13 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
             <!---ALEX:$QUERYS--->
         ```
 
-        !!! summary "Sample result"
+        ??? summary "Sample result"
 
-            <!---ALEX:$SCREENSHOT--->
+            ![](../img/placeholder.png ""){: class="w600" }
 
 ### Challenge 2: Write a Detection Query in KQL
 
-We now have the knowledge of `StorageBlobLogs` table structure, an true-positive event in the dataset, and the power of KQL at our fingertips! Build a robust query which can be turned into a Scheduled Analytics Rule, and make sure the [Account Entity](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#user-account) can be extracted from the alert.     
+We now have the knowledge of `StorageBlobLogs` table structure, an true-positive event in the dataset, and the power of KQL at our fingertips! Build a robust query which can be turned into a Scheduled Analytics Rule, and make sure the [IP Entity](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#ip-address) and [Azure Resource](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#azure-resource) can be extracted from the alert.     
 
 ??? cmd "Solution"
 
@@ -98,19 +102,9 @@ We now have the knowledge of `StorageBlobLogs` table structure, an true-positive
 
         !!! summary "Sample result"
 
-            <!---ALEX:$SCREENSHOT--->
+            ![](../img/placeholder.png ""){: class="w600" }
 
-    2. That query would actually already suffice to detect any download of the honey file! However, our goal in this workshop is finding access by Azure AD User Accounts only - investigating storage access authorized via Shared Access Signatures would require forwarding of additional logs unavailable on the free tier. So lets filter on the that.
-
-        ```kql
-            <!---ALEX:$QUERYS--->
-        ```
-
-        !!! summary "Sample result"
-
-            <!---ALEX:$SCREENSHOT--->
-
-    3. To later configure our Entities in the Scheduled Analytics Rule, we need to surface identifiers for the user account. As stated in the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference#user-account), the ObjectGUID of the user would already suffice to uniquely identify the Azure AD User Account. But let´s nevertheless surface the name and tenantId in addition to the objectGuid to practice KQL. 
+    2. To later configure our Entities in the Scheduled Analytics Rule, we need to have strong identifiers. As stated in the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference), this would the IP address for the IP Entity and the Resource ID for the Azure resource. The later is already directly available in the `_ResourceId` field. However for the IP Address we would need to strip the port from the `CallerIpAddress` field, which we can achieve by using `split()`    
 
         ```kql
             <!---ALEX:$QUERYS--->
@@ -118,268 +112,121 @@ We now have the knowledge of `StorageBlobLogs` table structure, an true-positive
 
         !!! summary "Sample result"
 
-            <!---ALEX:$SCREENSHOT--->
+            ![](../img/placeholder.png ""){: class="w600" }
 
-### Challenge 3: Create a Scheduled Query Rule with Automation
+### Challenge 3: Create a Scheduled Query Rule
 
-With your detection query at hand, create a Scheduled Query Rule with an entity mapping for the User Account and triggers the playbook `SentinelIncident-GetEntityInformation` via an incident trigger. 
+With your detection query at hand, create a Scheduled Query Rule with an entity mapping for the IP address  of the caller and the Azure resource. 
 
 ??? cmd "Solution"
 
-    1. Let's start by looking at your downloaded data. Before that, we need to figure out how to get to the raw data. Since the data is GZIP-compressed, you could extract every one of these files, but there is a better way: using `zcat` to both extract and review the resulant data. View all file content in the `cloudtrail-logs` directory with `zcat`.
+    1. Select the Analytics blade in the Configuration section on the left navigation pane. Once loaded, start the Analytics rule wizard by selecting `Scheduled query rule` under the `Create` dropdown.  
 
-        ```bash
-        zcat /home/cloudshell-user/cloudtrail-logs/*.json.gz
-        ```
+        ![](../img/placeholder.png ""){: class="w600" }
 
-        !!! summary "Expected result"
+    2. First we need to provide some general information about our rule. Fill out the fields as followed and when done, click `Next: Set rule logic >`   
+        
+        - **Name**
+        
+            The human readable name which we give to our rule.
 
-            WAY TOO MUCH DATA TO SHOW HERE!
+            > StorageAccounts - BlobRead operation on sensitive file detected
 
-    2. That data is quite a lot and is very hard to review manually. Luckily, there is a utility in CloudShell that can rescue you: `jq`. Use `jq` to both present the data in an easier-to-read format and also just view the first record of the first file to see the structure of the log data like so:
+        - **Description**
 
-        ```bash
-        zcat $(ls /home/cloudshell-user/cloudtrail-logs/*.json.gz | head -1) \
-         | jq '.Records[0]'
-        ```
+            It is highly advised to provide additional information about the rule. Such as the intended detection use case, what a true-positive would indicate, or circumstances which could lead to an false-positive.        
 
-        !!! summary "Sample results"
+            > Detects when a file in a sensitive Blob Storage location is read. This can indicate stolen user credential or an insider threat. False-positives can be triggered by legitimate file access operations.
+                    
+        - **Tactics and techniques**
+        
+            Mapping your rules to the [MITRE ATT&CK framework](https://attack.mitre.org/matrices/enterprise/) helps you keep track of your detection coverage.  
 
-            ```bash
-            {
-            "eventVersion": "1.08",
-            "userIdentity": {
-                "type": "AWSService",
-                "invokedBy": "cloudtrail.amazonaws.com"
-            },
-            "eventTime": "2023-03-18T10:30:51Z",
-            "eventSource": "s3.amazonaws.com",
-            "eventName": "GetBucketAcl",
-            "awsRegion": "us-east-1",
-            "sourceIPAddress": "cloudtrail.amazonaws.com",
-            "userAgent": "cloudtrail.amazonaws.com",
-            "requestParameters": {
-                "bucketName": "cloudlogs-123456789010",
-                "Host": "cloudlogs-123456789010.s3.us-east-1.amazonaws.com",
-                "acl": ""
-            },
-            "responseElements": null,
-            "additionalEventData": {
-                "SignatureVersion": "SigV4",
-                "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                "bytesTransferredIn": 0,
-                "AuthenticationMethod": "AuthHeader",
-                "x-amz-id-2": "pMA3dNprLD8n9BXHH02Z+VIiUGqIWlpn1JNCXBn5dV4Blk7yQ83bz9qG9Qb2E/ljZfpU82mOb80=",
-                "bytesTransferredOut": 542
-            },
-            "requestID": "035F74YAQBE4N0B9",
-            "eventID": "82c10c51-1f5d-4de1-b729-4d0c3c45e0d4",
-            "readOnly": true,
-            "resources": [
-                {
-                "accountId": "123456789010",
-                "type": "AWS::S3::Bucket",
-                "ARN": "arn:aws:s3:::cloudlogs-123456789010"
-                }
-            ],
-            "eventType": "AwsApiCall",
-            "managementEvent": true,
-            "recipientAccountId": "123456789010",
-            "sharedEventID": "66965521-4adc-40f5-b23e-ccb05b66bbfb",
-            "eventCategory": "Management"
-            }
+            > Discovery, T1619 - Cloud Storage Object Discovery
+    
+        ??? summary "Expected Result"
+
+            ![](../img/placeholder.png ""){: class="w600" }
+
+    3. Here we have to fill out quite some fields, so let´s take it step by step. Start by providing our KQL query and hit the `View query results` button. We expect to see the same results as before.
+
+            ```kql
+            StorageBlobLogs
+            | where AccountName == "productiondatamain"
+            | where OperationName == "GetBlob"
+            | where ObjectKey startswith "/productiondatamain/secretdata/"
+            | extend AttackerIP = split(CallerIpAddress,':')[0]
+            | sort by TimeGenerated desc 
             ```
 
-    3. You may or may not have gotten a record related to a data event. We can fix that by using `jq` to extract only those records where the `managementEvent` is `false`. The command below will grab just data events from the event data using the `select()` filtering option.
+            ![](../img/placeholder.png ""){: class="w600" }
 
-        ```bash
-        zcat $(ls /home/cloudshell-user/cloudtrail-logs/*.json.gz) \
-         | jq -r '. | select(.Records[].managementEvent == false)'
-        ```
+        Unfold the Entity mapping section and create 2 entities, IP and Azure resource. Map Address to `AttackerIP` for the IP entity, and ResourceId to `_ResourceId` for the Azure resource entity.
 
-        !!! summary "Sample result"
+            ![](../img/placeholder.png ""){: class="w600" }
 
-            ```bash
-            {
-                "Records": [
-                    {
-                        "eventVersion": "1.08",
-                        "userIdentity": {
-                            "type": "Root",
-                            "principalId": "123456789010",
-                            "arn": "arn:aws:iam::123456789010:root",
-                            "accountId": "123456789010",
-                            "accessKeyId": "ASIATAI5Z633YGJXOFXZ",
-                            "userName": "ryanryanic",
-                            "sessionContext": {
-                                "attributes": {
-                                    "creationDate": "2023-03-19T04:54:36Z",
-                                    "mfaAuthenticated": "false"
-                                }
-                            }
-                        },
-                        "eventTime": "2023-03-19T10:57:19Z",
-                        "eventSource": "s3.amazonaws.com",
-                        "eventName": "ListObjects",
-                        "awsRegion": "us-east-1",
-                        "sourceIPAddress": "44.202.147.98",
-                        "userAgent": "[aws-cli/2.11.2 Python/3.11.2 Linux/4.14.255-305-242.531.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/s3.ls]",
-                        "requestParameters": {
-                            "list-type": "2",
-                            "bucketName": "databackup-123456789010",
-                            "encoding-type": "url",
-                            "prefix": "",
-                            "delimiter": "/",
-                            "Host": "databackup-123456789010.s3.us-east-1.amazonaws.com"
-                        },
-                        "responseElements": null,
-                        "additionalEventData": {
-                            "SignatureVersion": "SigV4",
-                            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                            "bytesTransferredIn": 0,
-                            "AuthenticationMethod": "AuthHeader",
-                            "x-amz-id-2": "vEFGxniqw03bet/amSETCYdavMQRdTtpYCk+f1GPpsC184l16EZNRMuHBp3nYCUMuSrsyuogRo8ddMv5NtaEvg==",
-                            "bytesTransferredOut": 523
-                        },
-                        "requestID": "5WDT0JW454734NF5",
-                        "eventID": "da646419-bad0-4d64-bd4a-1e2b44276299",
-                        "readOnly": true,
-                        "resources": [
-                            {
-                                "type": "AWS::S3::Object",
-                                "ARNPrefix": "arn:aws:s3:::databackup-123456789010/"
-                            },
-                            {
-                                "accountId": "123456789010",
-                                "type": "AWS::S3::Bucket",
-                                "ARN": "arn:aws:s3:::databackup-123456789010"
-                            }
-                        ],
-                        "eventType": "AwsApiCall",
-                        "managementEvent": false,
-                        "recipientAccountId": "123456789010",
-                        "eventCategory": "Data",
-                        "tlsDetails": {
-                            "tlsVersion": "TLSv1.2",
-                            "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                            "clientProvidedHostHeader": "databackup-123456789010.s3.us-east-1.amazonaws.com"
-                        }
-                    }
-                ]
-            }
+        For the Query scheduling, select 15 Minutes for both parameters - the first controls the schedule, the second how far the query should look back. Be aware that Sentinel has a built-in 5 min delay, i.e. a query running at time T with lookup of 15 minutes will query for data from T-5 min back to T-20 min.       
+        
+            ![](../img/placeholder.png ""){: class="w600" }
+        
+        For the purpose of our workshop, set the Event grouping to `Trigger an alert for each event`.  
 
-            <snip>
-            ```
+            ![](../img/placeholder.png ""){: class="w600" }
 
-    4. Now we're getting somewhere. You will likely see, if you scroll through the data, the access of the honey file, but let's create one more filter to match just the access of the honey file. To do this, you may have noticed that the file name is included in the `.requestParameters.key` field and the `eventName` is `GetObject`. You can combine both of those cases in the following command:
+        ??? summary "Expected Result"
 
-        ```bash
-        zcat /home/cloudshell-user/cloudtrail-logs/*.json.gz  | \
-          jq -r '.Records[] | select((.eventName == "GetObject") and .requestParameters.key == "password-backup.txt")'
-        ```
+            ![](../img/placeholder.png ""){: class="w600" }
 
-        !!! summary "Sample result"
+    4. Not much to do for us on the next view, except verifying that Incident settings are `Enabled` and Alert grouping is `Disabled`.
 
-            ```bash
-            {
-                "eventVersion": "1.08",
-                "userIdentity": {
-                    "type": "Root",
-                    "principalId": "123456789010",
-                    "arn": "arn:aws:iam::123456789010:root",
-                    "accountId": "123456789010",
-                    "accessKeyId": "ASIATAI5Z633WXL7W5UQ",
-                    "userName": "ryanryanic",
-                    "sessionContext": {
-                        "attributes": {
-                            "creationDate": "2023-03-19T04:54:36Z",
-                            "mfaAuthenticated": "false"
-                        }
-                    }
-                },
-                "eventTime": "2023-03-19T11:00:50Z",
-                "eventSource": "s3.amazonaws.com",
-                "eventName": "GetObject",
-                "awsRegion": "us-east-1",
-                "sourceIPAddress": "44.202.147.98",
-                "userAgent": "[aws-cli/2.11.2 Python/3.11.2 Linux/4.14.255-305-242.531.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/s3.cp]",
-                "requestParameters": {
-                    "bucketName": "databackup-123456789010",
-                    "Host": "databackup-123456789010.s3.us-east-1.amazonaws.com",
-                    "key": "password-backup.txt"
-                },
-                "responseElements": null,
-                "additionalEventData": {
-                    "SignatureVersion": "SigV4",
-                    "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                    "bytesTransferredIn": 0,
-                    "AuthenticationMethod": "AuthHeader",
-                    "x-amz-id-2": "nKl0ChcIi+IUpXN2b7DHChT9ivctg5wEOC+aoLZBVK8AF5GPuAcUCAco3SETgystQmjyabnMd3o=",
-                    "bytesTransferredOut": 91
-                },
-                "requestID": "X3WAD8N3JFZKSY05",
-                "eventID": "7adf0612-f936-4368-bccb-6a2afde40d15",
-                "readOnly": true,
-                "resources": [
-                    {
-                    "type": "AWS::S3::Object",
-                    "ARN": "arn:aws:s3:::databackup-123456789010/password-backup.txt"
-                    },
-                    {
-                    "accountId": "123456789010",
-                    "type": "AWS::S3::Bucket",
-                    "ARN": "arn:aws:s3:::databackup-123456789010"
-                    }
-                ],
-                "eventType": "AwsApiCall",
-                "managementEvent": false,
-                "recipientAccountId": "123456789010",
-                "eventCategory": "Data",
-                "tlsDetails": {
-                    "tlsVersion": "TLSv1.2",
-                    "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                    "clientProvidedHostHeader": "databackup-123456789010.s3.us-east-1.amazonaws.com"
-                }
-            }
-            ```
+        ??? summary "Expected Result"
 
-    5. Now we're down to the single record (unless you downloaded the file multiple times). But that record is still quite busy. Let's extent that filter one final time to extract the following key details about the attacker:
+            ![](../img/placeholder.png ""){: class="w600" }
 
-        | Field | Description |
-        |:------|:------------|
-        | `userIdentity.userName` | The AWS username (IAM user) or account alias (root user) that made the request |
-        | `sourceIPAddress` | The client IP address |
-        | `eventTime` | The time of the request |
-        | `eventName` | The name of the API call |
-        | `requestParameters.bucketName` | The name of the S3 bucket where the file is stored |
-        | `requestParameters.key` | The name of the downloaded file |
-        | `userAgent` | The likely application that interacted with AWS |
+    5. Here we could already configure our Automation, but let´s finish creating our detection first and attach the Automation in the next section.
 
-        ```bash
-        zcat /home/cloudshell-user/cloudtrail-logs/*.json.gz  | \
-          jq -r '.Records[] | select((.eventName == "GetObject") and '\
-        '.requestParameters.key == "password-backup.txt") | '\
-        '{"userName": .userIdentity.userName, '\
-        '"sourceIPAddress": .sourceIPAddress, '\
-        '"eventTime": .eventTime, '\
-        '"bucketName": .requestParameters.bucketName, '\
-        '"fileName": .requestParameters.key, '\
-        '"userAgent": .userAgent}'
-        ```
+        ??? summary "Expected Result"
 
-        !!! summary "Sample result"
+            ![](../img/placeholder.png ""){: class="w600" }
 
-            ```bash
-            {
-                "userName": "ryanryanic",
-                "sourceIPAddress": "44.202.147.98",
-                "eventTime": "2023-03-19T11:00:50Z",
-                "bucketName": "databackup-123456789010",
-                "fileName": "password-backup.txt",
-                "userAgent": "[aws-cli/2.11.2 Python/3.11.2 Linux/4.14.255-305-242.531.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/s3.cp]"
-            }
-            ```
+    6. At this step Sentinel does one final validation of our inputs - and so should we. When our rule passes the validation we hit the `create` button and thus exit the wizard.     
+
+        ??? summary "Expected Result"
+
+            ![](../img/placeholder.png ""){: class="w600" }
+
+    7. You should be brought back to the Analytics blade and see your newly created Scheduled Query Rule
+ 
+         ??? summary "Expected Result"
+
+            ![](../img/placeholder.png ""){: class="w600" }
+
+### Challenge 4: Automate the creation of investigation tasks
+
+When writing detections, it is important to think about how the alerts generated by those detections should be handled. Create a Automation which adds investigation tasks to incidents created by your Scheduled Query rule.    
+
+??? cmd "Solution"
+
+    1. Select the Automation blade in the Configuration section on the left navigation pane. Once loaded, start the Automation rule creation wizard by selecting `Automation rule` under the `Create` dropdown. Compared to the Scheduled Query rule this is a rather short wizard.
+
+        ![](../img/placeholder.png ""){: class="w600" }
+
+    2. Give the Automation an appropriate `name` (e.g. "Add Tasks - Suspicious data access playbook") and select `When incident is created` as the Trigger. As a condition, select the name of your Scheduled Query rule.   
+
+        ![](../img/placeholder.png ""){: class="w600" }
+
+    3. Add three separate Actions of the type `Add Task` and provide simple investigation tasks which you would want an analyst to complete when working on this type of incident.
+
+        For the purposes of demonstration, you can use the following:
+
+           - `Investigate account used for data access`
+           - `Investigate host used for data access`
+           - `Decide on escalation path`  
+
+        ![](../img/placeholder.png ""){: class="w600" }
+
+    4. Thats all! Press the `Apply` button to finish the wizard and return to the Automation blade. 
 
 ## Conclusion
 
-In this exercise, you walked through an example hunt for ATT&CK technique T1530 (Data from Cloud Storage) using a honey file and some slicing and dicing of CloudTrail data events. That was a lot of manual effort. In the next exercise, you will automate this discovery with the assistance of a few cloud services.
+We now have the Scheduled Query rule and automation to add investigation tasks to incidents created by the rule in place. The next step is to rerun our attack and verify everything is working.
