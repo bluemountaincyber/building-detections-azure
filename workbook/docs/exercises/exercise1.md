@@ -1,243 +1,278 @@
-## DevNotes
-
-### ToDo
-- [ ] Create deployment script
-- [ ] Create content for StorageAccount
-- [ ] Create Sentinel Analytics rule 
-- [ ] Write Objective text
-- [ ] Write Exercise text
-- [ ] Provide Screenshots
-
-### Required from the student
-- Azure Tenant
-    - Should/can we link them to the sign-up page for a tenant?
-- Separate subscription (?)
-- "Main" user account
-    - Assigned Roles
-        - Global Administrator (?)
-
-### Resource to be deployed
-- Resource-Group 
-- User
-	- New "Victim" service principal
-    	- Attributes should make it look like a storage service account
-        - AD Roles assignments
-            - `Reader` on the storage account
-            - `Storage Blob Data Reader` on the storage account  
-    - "Main" user account
-        - AD Roles assignments
-            - `Storage Blob Data Reader` on the storage account
-- Storage Account
-	- Blob Containers (hr-documents / secretdata)
-		- Upload files/folders including HoneyFile 
-- LogAnalyticsWorkspace
-- Sentinel
-	- Import deactivated Analytics Rule
-	- Permission for Sentinel to run Automation
-    	- `Microsoft Sentinel Automation Contributor` for `Azure Security Insights` on ResourceGroup
-
-
-### To be configured by student in the lab
-- Cloud Shell
-- Metrics from StorageAccount to LogAnalytics	
-- Automation in Sentinel to add Tasks to the incidient
-
------
-
 # Exercise 1: Deploying the Workshop Resources
 
 **Estimated time to complete:** 15 minutes
 
 ## Objectives
 
-* Log into AWS account and launch **CloudShell** session in the N. Virginia (**us-east-1**) region.
-* Download source code using `git` from the workshop [GitHub repository](https://github.com/bluemountaincyber/building-detections-aws).
-* Deploy workshop resources using AWS CloudFormation and verify resources were successfully created.
+* Log into your Azure account and launch a **Cloud Shell** session
+* Download source code using `git` from the workshop [GitHub repository](https://github.com/bluemountaincyber/building-detections-azure)
+* Deploy workshop resources using Terraform and verify resources were successfully created
 
 ## Challenges
 
-### Challenge 1: Launch AWS CloudShell
+### Challenge 1: Launch Azure Cloud Shell
 
 The exercises performed in this workshop are designed to simply use your web browser - no additional tools (e.g., virtual machines, SSH clients) required! Many cloud vendors allow customers to generate a shell session in a vendor-managed container/VM to perform basic tasks. We will use this to our advantage to deploy resources, perform attacks, and build our detections.
 
-Begin by logging into your AWS account and launch a **CloudShell** session  in the **N. Virginia (us-east-1)** region.
+Begin by logging into your Azure account and launch a **Cloud Shell** session.
 
 ??? cmd "Solution"
 
-    1. Navigate to [https://console.aws.amazon.com](https://console.aws.amazon.com) and sign in with either your root user account or an IAM user with **AdministratorAccess** permissions.
+    1. Navigate to [https://portal.azure.com](https://portal.azure.com) and sign in with your Microsoft account by typing in your username (1) and clicking **Next** (2). On the next page, enter your password (3) and click **Sign in** (4).
 
-        !!! note "Root User"
+        ![](../img/3.png ""){: class="w300" }
+        ![](../img/4.png ""){: class="w300" }
 
-            Select the **Root user** radio button (1), enter your email address used to sign up for AWS in the **Root user email address** text field (2), and click the **Next** button (3). On the next page, enter your password in the **Password** text field (4) and click the **Sign in** button (5).
+    2. You may be prompted to stay signed in. Click **Yes** to continue.
 
-            ![](../img/1.png ""){: class="w300" }
-            ![](../img/2.png ""){: class="w300" }
+        ![](../img/5.png ""){: class="w300" }
 
-        !!! note "IAM User"
+    3. You can launch a **Cloud Shell** session by clicking on the command prompt icon at the top of the page.
 
-            Select the **IAM user** radio button (1), enter your AWS account number of alias in the **Account ID (12 digits) or account alias** text field (2), and click the **Next** button (3). On the next page, enter your IAM username in the **IAM user name** text field (4), enter your IAM user's password in the **Password** text field (5), and click on the **Sign in** button (6).
+        ![](../img/6.png ""){: class="w600" }
 
-            ![](../img/3.png ""){: class="w300" }
-            ![](../img/4.png ""){: class="w300" }
-
-    2. When you arrive at the **AWS Management Console**, ensure that you are currently interacting with the **N. Virginia (us-east-1)** region by taking a look at the top-right of the page. You should see **N. Virginia**. If you see a different region, click the down arrow next to the region's name (1) and select **East US (N. Virginia** (2).
-
-        ![](../img/5.png ""){: class="w400" }
-
-    3. Now that you are interacting with the **N. Virginia (us-east-1)** region, click on the icon near the top-right that looks like a command prompt to start a **CloudShell** session.
-
-        ![](../img/6.png ""){: class="w500" }
-
-    4. On the next page, you will see a banner that states *Waiting for environment to run...*. Wait a minute or two until you see a command prompt that looks similar to `[cloudshell-user@ip-10-1-82-127 ~]$` (your hostname will vary).
+    4. If this is the first time using Cloud Shell, you will be prompted to create a Storage Account to save your disk content. You can simply click the **Create storage** button to continue.
 
         ![](../img/7.png ""){: class="w500" }
 
-    !!! note
+    5. You may be asked if you want to start a **Bash** or **PowerShell** session. Choose **PowerShell**.
 
-        Your **CloudShell** session will expire after roughly 20 minutes of inactivity. If this happens, simply attempt to type and the session should resume. If this does not work, refresh the page.
+        !!! note
+
+            If you are already in a **Bash** session, you can switch to PowerShell by clicking on the **Bash** dropdown (1) and choosing **PowerShell** (2).
+
+            ![](../img/1.png ""){: class="w300" }
+
+            Click **Confirm** to switch.
+
+            ![](../img/2.png ""){: class="w500" }
 
 ### Challenge 2: Download Workshop Code
 
-In order to rapidly set up some realistic targets in your environment that you will attack, as well as setup some of the more time-consuming resources to assist in the automated detection, there is some Infrastructure as Code (IaC) provided in [this GitHub repository](https://github.com/bluemountaincyber/building-detections-aws).
+In order to rapidly set up some realistic targets in your environment that you will attack, as well as setup some of the more time-consuming resources to assist in the automated detection, there is some Infrastructure as Code (IaC) provided in [this GitHub repository](https://github.com/bluemountaincyber/building-detections-azure).
 
-Now that you are in a **CloudShell** session, you will need to download this code in order to deploy these resources via AWS CloudFormation. But how to pull the code down to the session? That's easy! AWS provides `git` in their **CloudShell** environment!
+Now that you are in a **Cloud Shell** session, you will need to download this code in order to deploy these resources via Terraform (which is a pre-installed tool in Cloud Shell). But how to pull the code down to the session? That's easy! Cloud Shell also provides `git`!
 
 ??? cmd "Solution"
 
-    1. Ensure that you are in your **CloudShell** session's home directory by running the following commands:
+    1. Ensure that you are in your **Cloud Shell** session's home directory by running the following commands:
 
-        ```bash
-        cd /home/cloudshell-user
-        pwd
+        ```powershell
+        cd 
+        Get-Location
         ```
 
-        !!! summary "Expected Result"
+        !!! summary "Sample Result"
 
-            ```bash
-            /home/cloudshell-user
+            ```powershell
+            Path
+            ----
+            /home/ryan
             ```
 
     2. Use `git` to clone the **evidence-app** source code.
 
-        ```bash
-        git clone https://github.com/bluemountaincyber/building-detections-aws
+        ```powershell
+        git clone https://github.com/bluemountaincyber/building-detections-azure.git
         ```
 
         !!! summary "Expected result"
 
-            ```bash
-            Cloning into 'building-detections-aws'...
-            remote: Enumerating objects: 215, done.
-            remote: Counting objects: 100% (215/215), done.
-            remote: Compressing objects: 100% (166/166), done.
-            remote: Total 215 (delta 82), reused 179 (delta 46), pack-reused 0
-            Receiving objects: 100% (215/215), 5.88 MiB | 17.70 MiB/s, done.
-            Resolving deltas: 100% (82/82), done.
+            ```powershell
+            Cloning into 'building-detections-azure'...
+            remote: Enumerating objects: 221, done.
+            remote: Counting objects: 100% (221/221), done.
+            remote: Compressing objects: 100% (155/155), done.
+            remote: Total 221 (delta 91), reused 193 (delta 64), pack-reused 0
+            Receiving objects: 100% (221/221), 8.31 MiB | 29.63 MiB/s, done.
+            Resolving deltas: 100% (91/91), done.
             ```
 
     3. Ensure that the code downloaded by running the following command:
 
-        ```bash
-        ls -la /home/cloudshell-user/building-detections-aws/
+        ```powershell
+        Get-ChildItem ~/building-detections-azure/
         ```
 
-        !!! summary "Expected Result"
+        !!! summary "Sample Results"
 
-            ```bash
-            drwxrwxr-x 5 cloudshell-user cloudshell-user 4096 Mar 17 14:54 .
-            drwxr-xr-x 8 cloudshell-user cloudshell-user 4096 Mar 17 14:54 ..
-            -rw-rw-r-- 1 cloudshell-user cloudshell-user 4720 Mar 17 14:54 BuildingDetections.yaml
-            drwxrwxr-x 8 cloudshell-user cloudshell-user 4096 Mar 17 15:02 .git
-            -rw-rw-r-- 1 cloudshell-user cloudshell-user   24 Mar 17 14:54 .gitignore
-            drwxrwxr-x 2 cloudshell-user cloudshell-user 4096 Mar 17 15:02 scripts
-            drwxrwxr-x 3 cloudshell-user cloudshell-user 4096 Mar 17 14:55 workbook
+            ```powershell
+                Directory: /home/ryan/building-detections-azure
+
+            UnixMode   User             Group                 LastWriteTime           Size Name
+            --------   ----             -----                 -------------           ---- ----
+            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 terraform
+            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 workbook
+            ```
+
+    4. Move into the `terraform` directory to prepare for the deployment.
+
+        ```powershell
+        cd ~/building-detections-azure/terraform/
+        Get-ChildItem
+        ```
+
+        !!! summary "Sample Results"
+
+            ```powershell
+                Directory: /home/ryan/building-detections-azure/terraform
+
+            UnixMode   User             Group                 LastWriteTime           Size Name
+            --------   ----             -----                 -------------           ---- ----
+            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 resources
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10            434 main.tf
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10            289 outputs.tf
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10           2477 security.tf
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10           2058 storage.tf
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10            824 users.tf
+            -rw-r--r-- ryan             ryan                5/11/2023 16:10            331 variables.tf
             ```
 
 ### Challenge 3: Deploy Workshop IaC Resources
 
 Finally, you have all of the components needed to deploy the resources in your AWS account.
 
-Use `build.sh` to deploy the IaC (which can be found in the `scripts` directory of the repo you just downloaded). Ensure that all worked properly by searching for the following AWS resources using the AWS CLI (also provided in CloudShell):
+Use the appropriate Terraform commands to deploy the resources in each `.tf` file. Ensure that all worked properly by searching for the following Azure resources using the Az PowerShell cmdlets (also provided in Cloud Shell):
 
-- [ ] A honey file named `password-backup.txt`
-- [ ] An S3 bucket with a name beginning with `databackup-` with a honey file placed inside called `password-backup.txt`
-- [ ] Lambda function named `HoneyFileDetection`
-- [ ] Security Hub is successfully deployed
-
-!!! warning
-
-    If you already have Security Hub setup in your AWS account within the N. Virginia region (us-east-1), your deployment will fail. The failure will look like this:
-
-    !!! summary "Failed deployment"
-
-        ```bash
-        Failed to create/update the stack. Run the following command
-        to fetch the list of events leading up to the failure
-        aws cloudformation describe-stack-events --stack-name building-detections
-        ```
-    
-    If that happens, you can run the following commands after this failure and try again:
-
-    ```bash
-    aws cloudformation delete-stack --stack-name building-detections
-    aws securityhub disable-security-hub
-    ```
+- [ ] 
 
 ??? cmd "Solution"
 
-    1. Run the `build.sh` script located in the `/home/cloudshell-user/building-detections-aws/scripts` directory. After roughly 2 minutes, it should complete.
+    1. Begin downloading the Terraform provider capabilities and setup of the Terraform local files and directories by running Terraform with the `init` argument.
 
-        ```bash
-        /home/cloudshell-user/building-detections-aws/scripts/build.sh
+        ```powershell
+        terraform init
         ```
 
         !!! summary "Sample Result"
 
-            ```bash
-            Waiting for changeset to be created..
-            Waiting for stack create/update to complete
-            Successfully created/updated stack - building-detections
+            ```powershell
+            Initializing the backend...
+
+            Initializing provider plugins...
+            - Finding hashicorp/azurerm versions matching "3.55.0"...
+            - Finding latest version of hashicorp/random...
+            - Finding hashicorp/azuread versions matching "2.38.0"...
+            - Finding azure/azapi versions matching "1.5.0"...
+            - Installing azure/azapi v1.5.0...
+            - Installed azure/azapi v1.5.0 (signed by a HashiCorp partner, key ID 6F0B91BDE98478CF)
+            - Installing hashicorp/azurerm v3.55.0...
+            - Installed hashicorp/azurerm v3.55.0 (signed by HashiCorp)
+            - Installing hashicorp/random v3.5.1...
+            - Installed hashicorp/random v3.5.1 (signed by HashiCorp)
+            - Installing hashicorp/azuread v2.38.0...
+            - Installed hashicorp/azuread v2.38.0 (signed by HashiCorp)
+
+            Partner and community providers are signed by their developers.
+            If you'd like to know more about provider signing, you can read about it here:
+            https://www.terraform.io/docs/cli/plugins/signing.html
+
+            Terraform has created a lock file .terraform.lock.hcl to record the provider
+            selections it made above. Include this file in your version control repository
+            so that Terraform can guarantee to make the same selections by default when
+            you run "terraform init" in the future.
+
+            Terraform has been successfully initialized!
+
+            You may now begin working with Terraform. Try running "terraform plan" to see
+            any changes that are required for your infrastructure. All Terraform commands
+            should now work.
+
+            If you ever set or change modules or backend configuration for Terraform,
+            rerun this command to reinitialize your working directory. If you forget, other
+            commands will detect it and remind you to do so if necessary.
             ```
 
-    2. Now, check that the resources listed above were deployed properly.
+    2. Now, you can deploy the resources using the `apply` argument. When prompted to continue, type `yes` and press `enter`.
 
-        - S3 bucket beginning with the name `databackup-` and its contents
+        ```powershell
+        terraform apply
+        ```
 
-            ```bash
-            BUCKET=$(aws s3api list-buckets | jq -r '.Buckets[] | select(.Name | startswith("databackup-")) | .Name')
-            aws s3 ls | grep $BUCKET
-            aws s3 ls s3://$BUCKET/
+        !!! summary "Expected Results"
+
+            ```powershell
+            data.azuread_client_config.current: Reading...                                         
+            data.azuread_domains.aad_domains: Reading...
+            data.azuread_service_principal.security_insight: Reading...
+
+            <snip>
+
+            Do you want to perform these actions?
+              Terraform will perform the actions described above.
+              Only 'yes' will be accepted to approve.
+
+              Enter a value: yes
+
+            <snip>
+
+            Apply complete! Resources: 17 added, 0 changed, 0 destroyed.
+
+            Outputs:
+
+            sp_client_id = "01234567-890a-bcde-f012-3456789abcde"
+            sp_password = <sensitive>
+            sp_tenant_id = "01234567-890a-bcde-f012-3456789abcde"
+            ```
+
+    3. And now, to see if a few of the resources were deployed properly:
+
+        - Resource Group named `DetectionWorkshop`
+
+            ```powershell
+            Get-AzResourceGroup | Select-Object ResourceGroupName
             ```
 
             !!! summary "Sample result"
 
-                ```bash
-                2023-03-25 15:35:22 databackup-123456789010
-                2023-03-25 15:36:20         91 password-backup.txt
+                ```powershell
+                ResourceGroupName
+                -----------------
+                DefaultResourceGroup-CUS
+                DetectionWorkshop
                 ```
 
-        - Lambda function named `HoneyFileDetection`
+        - Azure AD Application named `DetectionWorkshop`
 
-            ```bash
-            aws lambda get-function --function-name HoneyFileDetection --query Configuration.FunctionArn --output text
+            ```powershell
+            Connect-AzureAD
+            Get-AzureADApplication
             ```
 
             !!! summary "Sample result"
 
-                ```bash
-                arn:aws:lambda:us-east-1:123456789010:function:HoneyFileDetection
+                ```powershell
+                ObjectId                             AppId                                DisplayName
+                --------                             -----                                -----------
+                01234567-890a-bcde-f012-3456789abcde 01234567-890a-bcde-f012-3456789abcde DetectionWorkshop
                 ```
 
-        - Security Hub is successfully deployed
+        - Log Analytics Workspace named `securitymonitoring`
 
-            ```bash
-            aws securityhub describe-hub --query HubArn --output text
+            ```powershell
+            Get-AzOperationalInsightsWorkspace -ResourceGroupName DetectionWorkshop | Select-Object Name
             ```
 
             !!! summary "Sample result"
 
-                ```bash
-                "arn:aws:securityhub:us-east-1:123456789010:hub/default"
+                ```powershell
+                Name
+                ----
+                securitymonitoring
+                ```
+
+        - Storage Account beginning with the name `proddata`
+
+            ```powershell
+            Get-AzStorageAccount -ResourceGroupName DetectionWorkshop
+            ```
+
+            !!! summary "Sample result"
+
+                ```powershell
+                StorageAccountName       ResourceGroupName PrimaryLocation SkuName      Kind      AccessTier CreationTime         ProvisioningState
+                ------------------       ----------------- --------------- -------      ----      ---------- ------------         -----------------
+                proddata38tto7i9p8mmxtrt DetectionWorkshop eastus          Standard_GRS StorageV2 Hot        5/11/2023 4:36:45 PM Succeeded
                 ```
 
 ## Conclusion

@@ -28,6 +28,10 @@ resource "azurerm_role_assignment" "sentinel_automation_contributor" {
   principal_id         = data.azuread_service_principal.security_insight.object_id
 }
 
+resource "azurerm_sentinel_log_analytics_workspace_onboarding" "onboarding" {
+  workspace_id = azurerm_log_analytics_workspace.law.id
+}
+
 resource "azurerm_sentinel_alert_rule_scheduled" "analytic" {
   name                       = "saBlobReadSensitive"
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
@@ -78,4 +82,8 @@ QUERY
 
   query_frequency = "PT15M"
   query_period = "PT15M"
+
+  depends_on = [
+    azurerm_sentinel_log_analytics_workspace_onboarding.onboarding
+  ]
 }
