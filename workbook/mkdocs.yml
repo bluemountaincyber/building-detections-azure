@@ -1,9 +1,9 @@
-site_name: 'Building Detections in AWS'
+site_name: 'Building Detections in Azure'
 copyright: '©2023 Ryan Nicholson | Blue Mountain Cyber, LLC'
-site_description: 'Building Detections in AWS'
+site_description: 'Building Detections in Azure'
 site_author: 'Ryan Nicholson'
 extra:
-  version: '2023-03-17'
+  version: '2023-05-02'
 
 INHERIT: ./base_config.yml
 
@@ -11,8 +11,9 @@ nav:
   - Home: 'index.md'
   - Exercises:
     - 'Exercise 1: Infrastructure Deployment': 'exercises/exercise1.md'
-    - 'Exercise 2: API Event Logging': 'exercises/exercise2.md'
-    - 'Exercise 3: Attacking the Cloud Account': 'exercises/exercise3.md'
-    - 'Exercise 4: Detecting the Attack': 'exercises/exercise4.md'
-    - 'Exercise 5: Building an Automated Detection': 'exercises/exercise5.md'
+    - 'Exercise 2: Configuring Logging': 'exercises/exercise2.md'
+    - 'Exercise 3: True-Positive Event Creation': 'exercises/exercise3.md'
+    - 'Exercise 4: Creating the Detection Rule & Automation': 'exercises/exercise4.md'
+    - 'Exercise 5: Testing the Detection Rule & Automation': 'exercises/exercise5.md'
     - 'Exercise 6: Tearing Down Resources': 'exercises/exercise6.md'
+  - DEV: 'markdown-snippets.md'    

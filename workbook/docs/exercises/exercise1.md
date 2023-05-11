@@ -1,3 +1,49 @@
+## DevNotes
+
+### ToDo
+- [ ] Create deployment script
+- [ ] Create content for StorageAccount
+- [ ] Create Sentinel Analytics rule 
+- [ ] Write Objective text
+- [ ] Write Exercise text
+- [ ] Provide Screenshots
+
+### Required from the student
+- Azure Tenant
+    - Should/can we link them to the sign-up page for a tenant?
+- Separate subscription (?)
+- "Main" user account
+    - Assigned Roles
+        - Global Administrator (?)
+
+### Resource to be deployed
+- Resource-Group 
+- User
+	- New "Victim" service principal
+    	- Attributes should make it look like a storage service account
+        - AD Roles assignments
+            - `Reader` on the storage account
+            - `Storage Blob Data Reader` on the storage account  
+    - "Main" user account
+        - AD Roles assignments
+            - `Storage Blob Data Reader` on the storage account
+- Storage Account
+	- Blob Containers (hr-documents / secretdata)
+		- Upload files/folders including HoneyFile 
+- LogAnalyticsWorkspace
+- Sentinel
+	- Import deactivated Analytics Rule
+	- Permission for Sentinel to run Automation
+    	- `Microsoft Sentinel Automation Contributor` for `Azure Security Insights` on ResourceGroup
+
+
+### To be configured by student in the lab
+- Cloud Shell
+- Metrics from StorageAccount to LogAnalytics	
+- Automation in Sentinel to add Tasks to the incidient
+
+-----
+
 # Exercise 1: Deploying the Workshop Resources
 
 **Estimated time to complete:** 15 minutes
