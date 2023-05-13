@@ -3,7 +3,7 @@
 ### ToDo
 - [X] Write Objective text
 - [X] Write Exercise text
-- [ ] Provide Commands / Scripts
+- [X] Provide Commands / Scripts
 - [ ] Provide Screenshots
 -----
 
@@ -70,8 +70,9 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
     
     5. Thats already quite some events! Let´s use [KQL](https://learn.microsoft.com/en-us/azure/data-explorer/kql-quick-reference) and the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/storagebloblogs) to get a better understanding of our data.   
 
-        ```kql
-            <!---ALEX:$QUERYS--->
+        ```sql
+        StorageBlobLogs
+        | summarize count() by AccountName, Protocol, OperationName
         ```
 
         ??? summary "Sample result"
@@ -80,8 +81,9 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
 
     6. At this point we should have a fair understanding of how the data is structured. Great! Now let´s make sure that we can see read events in the data.  
 
-        ```kql
-            <!---ALEX:$QUERYS--->
+        ```sql
+        StorageBlobLogs
+        | where OperationName == "GetBlob"
         ```
 
         ??? summary "Sample result"
@@ -94,23 +96,31 @@ We now have the knowledge of `StorageBlobLogs` table structure, an true-positive
 
 ??? cmd "Solution"
 
-    1. First, refine the query to only find `GetBlob` operations on the honey file in the `secretdata` container of the storage account starting with `productiondatamain`. Verify you get results at this stage.
+    1. First, refine the query to only find `GetBlob` operations on the 'final-instructions.txt' honey file in the storage account starting with `proddata`. Verify you get results at this stage.
 
-        ```kql
-            <!---ALEX:$QUERYS--->
+        ```sql
+        StorageBlobLogs
+        | where AccountName startswith "proddata"
+        | where OperationName == "GetBlob"
+        | where ObjectKey endswith "final-instructions.txt"
         ```
 
-        !!! summary "Sample result"
+        ??? summary "Sample result"
 
             ![](../img/placeholder.png ""){: class="w600" }
 
     2. To later configure our Entities in the Scheduled Analytics Rule, we need to have strong identifiers. As stated in the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/sentinel/entities-reference), this would the IP address for the IP Entity and the Resource ID for the Azure resource. The later is already directly available in the `_ResourceId` field. However for the IP Address we would need to strip the port from the `CallerIpAddress` field, which we can achieve by using `split()`    
 
-        ```kql
-            <!---ALEX:$QUERYS--->
+        ```sql
+        StorageBlobLogs
+        | where AccountName startswith "proddata"
+        | where OperationName == "GetBlob"
+        | where ObjectKey endswith "final-instructions.txt"
+        | extend AttackerIP = split(CallerIpAddress,':')[0]
+        | sort by TimeGenerated desc
         ```
 
-        !!! summary "Sample result"
+        ??? summary "Sample result"
 
             ![](../img/placeholder.png ""){: class="w600" }
 
@@ -150,28 +160,28 @@ With your detection query at hand, create a Scheduled Query Rule with an entity 
 
     3. Here we have to fill out quite some fields, so let´s take it step by step. Start by providing our KQL query and hit the `View query results` button. We expect to see the same results as before.
 
-            ```kql
-            StorageBlobLogs
-            | where AccountName == "productiondatamain"
-            | where OperationName == "GetBlob"
-            | where ObjectKey startswith "/productiondatamain/secretdata/"
-            | extend AttackerIP = split(CallerIpAddress,':')[0]
-            | sort by TimeGenerated desc 
-            ```
+        ```sql
+        StorageBlobLogs
+        | where AccountName startswith "proddata"
+        | where OperationName == "GetBlob"
+        | where ObjectKey endswith "final-instructions.txt"
+        | extend AttackerIP = split(CallerIpAddress,':')[0]
+        | sort by TimeGenerated desc
+        ```
 
-            ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/placeholder.png ""){: class="w600" }
 
         Unfold the Entity mapping section and create 2 entities, IP and Azure resource. Map Address to `AttackerIP` for the IP entity, and ResourceId to `_ResourceId` for the Azure resource entity.
 
-            ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/placeholder.png ""){: class="w600" }
 
         For the Query scheduling, select 15 Minutes for both parameters - the first controls the schedule, the second how far the query should look back. Be aware that Sentinel has a built-in 5 min delay, i.e. a query running at time T with lookup of 15 minutes will query for data from T-5 min back to T-20 min.       
         
-            ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/placeholder.png ""){: class="w600" }
         
         For the purpose of our workshop, set the Event grouping to `Trigger an alert for each event`.  
 
-            ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/placeholder.png ""){: class="w600" }
 
         ??? summary "Expected Result"
 
@@ -197,7 +207,7 @@ With your detection query at hand, create a Scheduled Query Rule with an entity 
 
     7. You should be brought back to the Analytics blade and see your newly created Scheduled Query Rule
  
-         ??? summary "Expected Result"
+        ??? summary "Expected Result"
 
             ![](../img/placeholder.png ""){: class="w600" }
 

