@@ -232,7 +232,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
                 DetectionWorkshop
                 ```
 
-        - Azure AD Application named `DetectionWorkshop`
+        - Azure AD Application named `Storage Manager`
 
             ```powershell
             Connect-AzureAD
@@ -244,7 +244,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
                 ```powershell
                 ObjectId                             AppId                                DisplayName
                 --------                             -----                                -----------
-                01234567-890a-bcde-f012-3456789abcde 01234567-890a-bcde-f012-3456789abcde DetectionWorkshop
+                01234567-890a-bcde-f012-3456789abcde 01234567-890a-bcde-f012-3456789abcde Storage Manager
                 ```
 
         - Log Analytics Workspace named `securitymonitoring`
