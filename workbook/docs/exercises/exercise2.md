@@ -64,7 +64,7 @@ In our case we could make due with only the `StorageRead` log category, but let 
 
 ??? cmd "Solution"
 
-    1. From the Azure Portal homepage, navigate to the storage account service and select the workshop storage account. Should you not see the storage account, make sure that no filter is applied for `Subscription`, `Resource group`, and `Location`.
+    1. From the Azure Portal homepage, type `Storage Accounts` in the searchbox at the top of the portal and select 'Storage Accounts' under the 'Services' category. Select the storage account in the 'DetectionWorkshop' resource group, it starts with 'proddata' Should you not see the storage account, make sure that no filter is applied for `Subscription`, `Resource group`, and `Location`.
     
         ![](../img/placeholder.png ""){: class="w600" }
 
@@ -76,7 +76,7 @@ In our case we could make due with only the `StorageRead` log category, but let 
     
         ![](../img/placeholder.png ""){: class="w600" }
 
-    4. We select all logs and metrics, and want them being send to our `Log Analytics workspace`. For the name, `AllEvents-LogAnalytics` should suffice. After pressing the `Save` button on the upper left corner you will be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
+    4. We select all logs and metrics, and want them being send to our `Log Analytics workspace`. Use `AllEvents-LogAnalytics` as the name. After pressing the `Save` button on the upper left corner you should be notified that the diagnostic setting was applied. Click the `x` in the upper right corner to be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
     
         ![](../img/placeholder.png ""){: class="w600" }
 

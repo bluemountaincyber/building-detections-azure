@@ -14,7 +14,28 @@ Log back into your **Cloud Shell** session and use Terraform with the `destroy a
 
 ??? cmd "Solution"
 
-    1. In your **CloudShell** session, run the following commands to destroy all workbook resources (answer the prompt with `yes` and press `enter` to tear everything down):
+    1. As we still logged in with the service principal in our Azure Cloud Shell, we first need to switch back to your administrative account.
+
+        ```powershell
+        az login | jq -r '.[].user'
+        ```
+
+        You will be prompted to visit https://microsoft.com/devicelogin and provide the code shown in the Azure Cloud Shell to authenticate yourself.
+
+        ![](../img/placeholder.png ""){: class="w600" }
+
+        ??? summary "Sample results"
+
+            You may have multiple results based on the amount of subscriptions your user has access to in your tenant.
+
+              ```json
+              {                                                         
+                "name": "abraulik@XXXXXXXXXX.onmicrosoft.com",
+                "type": "user"
+              }
+              ```
+
+    2. Now, run that **CloudShell** session, run the following commands to destroy all workbook resources (answer the prompt with `yes` and press `enter` to tear everything down):
 
         ```powershell
         cd ~/building-detections-azure/terraform

@@ -62,7 +62,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
         ??? summary "Sample results"
 
             ```
-            proddatadj35l13m5693m5 
+            "proddatadj35l13m5693m5" 
             ```
 
         You should see a storage account beginning with `proddata` followed by some randomized numbers and lowercase characters. The storage account name is randomized for every run of the deployment script because storage account name need to be *GLOBALLY* unique.
@@ -255,7 +255,7 @@ That certainly looks like something an adversary could not leave untouched. And 
         Get-Content ./ex3-secretdata-final-instructions.txt 
         ```
 
-        !!! summary "Sample result"
+        ??? summary "Sample result"
 
             ```
             When all is done:

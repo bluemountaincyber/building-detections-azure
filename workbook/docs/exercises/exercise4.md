@@ -36,14 +36,15 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
 
 ??? cmd "Solution"
 
-    1. In your Azure Portal, navigate to the Microsoft Sentinel service and select the instance based on the `securitymonitoring` Log Analytics workspace.
+    1. From the Azure Portal homepage, type `Sentinel` in the searchbox at the top of the portal and select 'Microsoft Sentinel' under the 'Services' category. Select the instance based on the `securitymonitoring` Log Analytics workspace.
         
         ![](../img/placeholder.png ""){: class="w600" }
 
     2. In the ´General´ section on the left panel, select the `Logs` blade. Should you be greeted by the `Queries` dialog, deactivate the `Always show Queries` toggle and close the dialog with the `X` in the upper right corner.  
+        
         ![](../img/placeholder.png ""){: class="w600" }
 
-    3. With the `Logs` blade in front of you, we need to find the table in which our blob storage events are stored: Select the `Tables` tab, open the `LogManagement` node and look for the aptly named `StorageBlobLogs` table.
+    3. With the `Logs` blade in front of you, we need to find the table in which our blob storage events are stored. Expand the `Schema and Filter` bar on the left of the main panel. Select the `Tables` tab, open the `LogManagement` node and look for the aptly named `StorageBlobLogs` table.
         
         ![](../img/placeholder.png ""){: class="w600" }
     
@@ -205,7 +206,7 @@ With your detection query at hand, create a Scheduled Query Rule with an entity 
 
             ![](../img/placeholder.png ""){: class="w600" }
 
-    7. You should be brought back to the Analytics blade and see your newly created Scheduled Query Rule
+    7. You should be brought back to the Analytics blade and see your newly created Scheduled Query Rule.
  
         ??? summary "Expected Result"
 

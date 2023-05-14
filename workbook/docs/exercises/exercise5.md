@@ -35,22 +35,42 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
 
     1. Return to your Azure Cloud Shell session (you may need to refresh the page if it timed out).
 
-    2. First we need to change the principal az is using to access the storage. In your Azure Cloud Shell run the `az login` command with the credentials of the service principal. 
+    2. Terraform created the service principal `Storage Manager` with the `Storage Blob Data Reader` role on our storage account - and we´ll use this account as our attacker. We retrieve the credentials for the principal from terraform and store them in powershell variables for further use.
 
         ```powershell
-        az login --service-principal -u '<>' -p '<>' --tenant '<>' | jq .[].user 
+        $sp_password = terraform output -raw sp_password; $sp_client_id = terraform output -raw sp_client_id; $sp_tenant_id = terraform output -raw sp_tenant_id
+        ```
+
+        This command chain does not have output, and we prefer to not write all those variables to the console. So, we count the size of the variables to make sure we did retrieve and store the credentials.
+
+        ```powershell
+        $sp_password.Length; $sp_client_id.Length; $sp_tenant_id.Length
+        ```
+
+        !!! summary "Sample results"
+
+            ```
+            40
+            36
+            36
+            ```
+
+    3. First we need to change the principal az is using to access the storage. In your Azure Cloud Shell run the `az login` command with the credentials of the service principal. 
+
+        ```powershell
+        az login --service-principal -u $sp_client_id -p $sp_password --tenant $sp_tenant_id | jq .[].user 
         ```
 
         !!! summary "Sample results"
 
             ```sql
             {
-              "name": "dj49flw9-d834-mfde-ldo1-39fh3091dk3s",
+              "name": "dj49flw9-d834-mfde-rofl-39fh3091dk3s",
               "type": "servicePrincipal"
             }
             ```
 
-    3. As we already did this attack before, lets optimize our commands a bit to make this easier. First, we will again list our storage accounts and the container content.   
+    4. As we already did this attack before, lets optimize our commands a bit to make this easier. First, we will again list our storage accounts and the container content.   
 
         ```powershell
         Write-Output ($storageAccount = az storage account list --resource-group 'DetectionWorkshop' | jq -r '.[] | select(.name | startswith("prod")) | .name'); Write-Output ($containerNamesArray = az storage container list --account-name $storageAccount --auth-mode login | jq -r '.[].name')
@@ -64,7 +84,7 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
             secretdata
             ```
 
-    4. Now run the following command which creates a folder in your homedirectory called `exercise5_loot` and downloads all the blobs from the `hr-document` and `secretdata`.
+    5. Now run the following command which creates a folder in your homedirectory called `exercise5_loot` and downloads all the blobs from the `hr-document` and `secretdata`.
 
         ```powershell
         New-Item -Path '~/' -Name "exercise5_loot" -ItemType "directory"; $containerNamesArray | foreach-object {az storage blob download-batch --account-name $storageAccount --source $_ --destination ~/exercise5_loot/ --overwrite true --auth-mode login | jq .}
@@ -89,7 +109,7 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
             ]
             ```
 
-    5. And a final command to verify that we got the blobs successfully by outputting their content.
+    6. And a final command to verify that we got the blobs successfully by outputting their content.
 
         ```powershell
         Get-ChildItem -Path '~/exercise5_loot' | foreach-object {$_.Name + ":"; (Get-Content $_) + "`n"}
@@ -123,18 +143,24 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
 
         ??? note "No incident visible?"
             
-            If no incident was triggered by our Scheduled Rule, you can re-set the schedule of the rule. The easiest way to achieve this is by disabling and re-enabling the rule. Navigate to the Analytics blade, click on the three dots to the right of your rule and select Disable/Enable.
+            Remember that at least 5 minutes need to pass between your action and the run the Scheduled Query rule for it to be able to find the events.
 
+            Go back to our logs in Sentinel and run the KQL query to check if you already able to see the events in the logs. 
+
+            ```sql
+            StorageBlobLogs
+            | where AccountName startswith "proddata"
+            | where OperationName == "GetBlob"
+            | where ObjectKey endswith "final-instructions.txt"
+            | extend AttackerIP = split(CallerIpAddress,':')[0]
+            | sort by TimeGenerated desc
+            ```
+
+            When the event is at least 5 minutes old, you can re-set the schedule of the rule. The easiest way to achieve this is by disabling and re-enabling the rule. Navigate to the Analytics blade, click on the three dots to the right of your rule and select Disable/Enable - an incident should pop-up a few seconds later.
 
             ![](../img/ex5-ch3-reboot.gif ""){: class="w500" }
 
-
-            Remember that at least 5 minutes need to pass between your action and the run the Scheduled Query rule for it to be able to find the events.
-
-
-            Don´t know what to do while you wait? Go back to our logs in Sentinel and search for events in our BlobStorageLogs table. Some entries will have the `AuthorizationDetails` populated and some are not. Try to figure out in which case you will not have this field, and check with the Microsoft documentation if your guess was right 😉.
-
-    2. Walking trough all the different components and aspects of the Incident details would be a full-day workshop itself, so we will focus on two aspects: tasks and entities.
+    2. Walking trough all the different components and aspects of the Incident details would be a full-day workshop itself, so we will focus on two aspects: tasks and entities. Should you be presented with the "Try the new experience" incident view, please turn it of for the following steps.
 
         ![](../img/placeholder.png ""){: class="w600" }
 
