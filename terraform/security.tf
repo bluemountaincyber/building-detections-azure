@@ -34,7 +34,7 @@ resource "azurerm_sentinel_log_analytics_workspace_onboarding" "onboarding" {
 
 resource "azurerm_sentinel_alert_rule_scheduled" "analytic" {
   name                       = "saBlobReadSensitive"
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
+  log_analytics_workspace_id = azurerm_sentinel_log_analytics_workspace_onboarding.onboarding.workspace_id
   display_name               = "Detects when a file in a sensitive Blob Storage location is read. This can indicate stolen user credential or an insider threat. False-positives can be triggered by legitimate file access operations."
   severity                   = "Medium"
   query                      = <<QUERY
@@ -82,8 +82,4 @@ QUERY
 
   query_frequency = "PT15M"
   query_period = "PT15M"
-
-  depends_on = [
-    azurerm_sentinel_log_analytics_workspace_onboarding.onboarding
-  ]
 }

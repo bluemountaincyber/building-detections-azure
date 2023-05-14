@@ -56,29 +56,53 @@ Review [MITRE ATT&CK Technique T1078.004](https://attack.mitre.org/techniques/T1
 
 ### Challenge 2: Configure logging and forwarding of blob storage events
 
-To be able to track usage of a honey file, we must monitor when it is accessed. This is done by creating a diagnostic setting on our blob storage resource.
+To be able to track usage of a honey file, we must monitor when it is accessed. This is done by creating a **diagnostic setting** on our blob storage resource.
 
-A diagnostic setting - in Microsofts own words - "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to".
+A diagnostic setting, in Microsoft's own words, "specifies a list of categories of platform logs and/or metrics that you want to collect from a resource, and one or more destinations that you would stream them to".
 
-In our case we could make due with only the `StorageRead` log category, but let us collect all the logs and metrics of this resource so we can see everything that is happening. To make searching and alerting on those events easier, we will send them into a Log Analytics workspace. Let´s configure this via the Azure Portal GUI.
+In our case, we could make due with only the `StorageRead` log category, but let us collect all the logs and metrics of this resource so we can see everything that is happening. To make searching and alerting on those events easier, we will send them into a **Log Analytics workspace**. Let´s configure this via the Azure Portal Graphical User Interface (GUI).
 
 ??? cmd "Solution"
 
-    1. From the Azure Portal homepage, type `Storage Accounts` in the searchbox at the top of the portal and select 'Storage Accounts' under the 'Services' category. Select the storage account in the 'DetectionWorkshop' resource group, it starts with 'proddata' Should you not see the storage account, make sure that no filter is applied for `Subscription`, `Resource group`, and `Location`.
-    
-        ![](../img/placeholder.png ""){: class="w600" }
+    1. From the Azure Portal homepage, type `Storage accounts` in the searchbox (1) at the top of the portal and select **Storage Accounts** (2) under the 'Services' category.
 
-    2. With the storage account selected, navigate to the `Monitoring` section on the left sidebar and select the `Diagnostic settings` blade. Clicking on the line with the `blob` resource in the main pane will bring you to the diagnostic settings of the blob, which should be empty at this stage of the workshop.
+        ![](../img/12.png ""){: class="w300" }
     
-        ![](../img/placeholder.png ""){: class="w600" }
+    2. Select the storage account in the **DetectionWorkshop** resource group. It starts with `proddata`. 
+    
+        !!! note
+    
+        Should you not see the storage account, make sure that no filter is applied for **Subscription**, **Resource group**, or **Location**.
+    
+        ![](../img/13.png ""){: class="w600" }
 
-    3. Click the `Add diagnostic setting` link and you will be prompted to supply a `Diagnostic setting name`, a selection of what Logs/Metrics should be collected, and the destination for said Logs/Metrics.
-    
-        ![](../img/placeholder.png ""){: class="w600" }
+    3. With the storage account selected, navigate to the **Monitoring** section on the left sidebar and select the **Diagnostic settings** blade. 
 
-    4. We select all logs and metrics, and want them being send to our `Log Analytics workspace`. Use `AllEvents-LogAnalytics` as the name. After pressing the `Save` button on the upper left corner you should be notified that the diagnostic setting was applied. Click the `x` in the upper right corner to be brought back to the Diagnostic settings view showing that we successfully configured our log collection.
+        ![](../img/14.png ""){: class="w200" }
     
-        ![](../img/placeholder.png ""){: class="w600" }
+    4. Click on the line with the **blob** resource.
+
+        ![](../img/15.png ""){: class="w400" }
+    
+    5. This will bring you to the diagnostic settings of the blob, which should be empty at this stage of the workshop. Click the **+ Add diagnostic setting** link to begin setting up the diagnostic setting.
+    
+        ![](../img/16.png ""){: class="w400" }
+
+    6. You will be prompted to supply a **Diagnostic setting name**, a selection of what Logs/Metrics should be collected, and the destination for said Logs/Metrics. Begin by entering the name of `AllEvents-LogAnalytics` in the **Diagnostic setting name** text field.
+
+        ![](../img/17.png ""){: class="w500" } 
+    
+    7. Since you want to send all logs and metrics, select all of the checkboxes in the left column (1-4).
+    
+        ![](../img/18.png ""){: class="w300" }
+
+    8. Lastly, you will need to choose where to send these logs and metrics. Place a check next to **Send to Log Analytics workspace** (1). Click on the **Log Analytics workspace** dropdown (2) and choose **securitymonitoring** (3). Click the **Save** icon (4) when finished.
+
+        !!! note
+
+            If you do not see **securitymonitoring** as an available workspace, ensure that you have selected the proper Azure subscription in the **Subscription** dropdown.
+
+        ![](../img/19.png ""){: class="w600" }
 
 ## Conclusion
 

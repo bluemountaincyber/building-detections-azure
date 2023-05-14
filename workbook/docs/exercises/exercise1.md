@@ -6,19 +6,19 @@
 
 * Log into your Azure account and launch a **Cloud Shell** session
 * Download source code using `git` from the workshop [GitHub repository](https://github.com/bluemountaincyber/building-detections-azure)
-* Deploy workshop resources using Terraform and verify resources were successfully created
+* Deploy workshop resources using **Terraform** and verify resources were successfully created
 
 ## Challenges
 
 ### Challenge 1: Launch Azure Cloud Shell
 
-The exercises performed in this workshop are designed to simply use your web browser - no additional tools (e.g., virtual machines, SSH clients) required! Many cloud vendors allow customers to generate a shell session in a vendor-managed container/VM to perform basic tasks. We will use this to our advantage to deploy resources, perform attacks, and build our detections.
+The exercises performed in this workshop are designed to simply use your web browser—no additional tools like virtual machines (VM) or SSH clients are required! Many cloud vendors allow customers to generate a shell session in a vendor-managed container/VM to perform basic tasks. We will use this to our advantage to deploy resources, perform attacks, and build our detections.
 
 Begin by logging into your Azure account and launch a **Cloud Shell** session.
 
 ??? cmd "Solution"
 
-    1. Navigate to [https://portal.azure.com](https://portal.azure.com) and sign in with your Microsoft account by typing in your username (1) and clicking **Next** (2). On the next page, enter your password (3) and click **Sign in** (4).
+    1. Navigate to [https://portal.azure.com](https://portal.azure.com) and sign in with your Microsoft account by typing in your **username** (1) and clicking **Next** (2). On the next page, enter your **password** (3) and click **Sign in** (4).
 
         ![](../img/3.png ""){: class="w300" }
         ![](../img/4.png ""){: class="w300" }
@@ -49,7 +49,7 @@ Begin by logging into your Azure account and launch a **Cloud Shell** session.
 
 ### Challenge 2: Download Workshop Code
 
-In order to rapidly set up some realistic targets in your environment that you will attack, as well as setup some of the more time-consuming resources to assist in the automated detection, there is some Infrastructure as Code (IaC) provided in [this GitHub repository](https://github.com/bluemountaincyber/building-detections-azure).
+In order to rapidly set up some realistic targets in your environment that you will attack, as well as setup some of the more time-consuming resources to assist in the automated detection, there is some **Infrastructure as Code (IaC)** provided in [this GitHub repository](https://github.com/bluemountaincyber/building-detections-azure).
 
 Now that you are in a **Cloud Shell** session, you will need to download this code in order to deploy these resources via Terraform (which is a pre-installed tool in Cloud Shell). But how to pull the code down to the session? That's easy! Cloud Shell also provides `git`!
 
@@ -62,7 +62,7 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
         Get-Location
         ```
 
-        !!! summary "Sample Result"
+        !!! summary "Sample results"
 
             ```powershell
             Path
@@ -76,7 +76,7 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
         git clone https://github.com/bluemountaincyber/building-detections-azure.git
         ```
 
-        !!! summary "Expected result"
+        !!! summary "Expected results"
 
             ```powershell
             Cloning into 'building-detections-azure'...
@@ -94,15 +94,16 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
         Get-ChildItem ~/building-detections-azure/
         ```
 
-        !!! summary "Sample Results"
+        !!! summary "Sample results"
 
             ```powershell
                 Directory: /home/ryan/building-detections-azure
 
             UnixMode   User             Group                 LastWriteTime           Size Name
             --------   ----             -----                 -------------           ---- ----
-            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 terraform
-            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 workbook
+            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 ressources
+            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 terraform
+            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 workbook
             ```
 
     4. Move into the `terraform` directory to prepare for the deployment.
@@ -112,20 +113,20 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
         Get-ChildItem
         ```
 
-        !!! summary "Sample Results"
+        !!! summary "Sample results"
 
             ```powershell
                 Directory: /home/ryan/building-detections-azure/terraform
 
             UnixMode   User             Group                 LastWriteTime           Size Name
             --------   ----             -----                 -------------           ---- ----
-            drwxr-xr-x ryan             ryan                5/11/2023 16:10           4096 resources
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10            434 main.tf
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10            289 outputs.tf
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10           2477 security.tf
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10           2058 storage.tf
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10            824 users.tf
-            -rw-r--r-- ryan             ryan                5/11/2023 16:10            331 variables.tf
+            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 resources
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17            434 main.tf
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17            289 outputs.tf
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17           2477 security.tf
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17           2058 storage.tf
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17            824 users.tf
+            -rw-r--r-- ryan             ryan                5/14/2023 15:17            331 variables.tf
             ```
 
 ### Challenge 3: Deploy Workshop IaC Resources
@@ -134,7 +135,10 @@ Finally, you have all of the components needed to deploy the resources in your A
 
 Use the appropriate Terraform commands to deploy the resources in each `.tf` file. Ensure that all worked properly by searching for the following Azure resources using the Az PowerShell cmdlets (also provided in Cloud Shell):
 
-- [ ] 
+- [ ] Resource Group named `DetectionWorkshop`
+- [ ] Azure AD Application named `Storage Manager`
+- [ ] Log Analytics Workspace named `securitymonitoring`
+- [ ] Storage Account beginning with the name `proddata`
 
 ??? cmd "Solution"
 
@@ -144,7 +148,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
         terraform init
         ```
 
-        !!! summary "Sample Result"
+        !!! summary "Sample results"
 
             ```powershell
             Initializing the backend...
@@ -183,13 +187,17 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
             commands will detect it and remind you to do so if necessary.
             ```
 
-    2. Now, you can deploy the resources using the `apply` argument. When prompted to continue, type `yes` and press `enter`.
+    2. Now, you can deploy the resources using the `apply` argument.
 
         ```powershell
         terraform apply
         ```
 
-        !!! summary "Expected Results"
+        !!! note
+
+            When prompted to perform these actions, type `yes` and press `enter`.
+
+        !!! summary "Expected results"
 
             ```powershell
             data.azuread_client_config.current: Reading...                                         
@@ -223,7 +231,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
             Get-AzResourceGroup | Select-Object ResourceGroupName
             ```
 
-            !!! summary "Sample result"
+            !!! summary "Sample results"
 
                 ```powershell
                 ResourceGroupName
@@ -239,7 +247,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
             Get-AzureADApplication
             ```
 
-            !!! summary "Sample result"
+            !!! summary "Sample results"
 
                 ```powershell
                 ObjectId                             AppId                                DisplayName
@@ -253,7 +261,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
             Get-AzOperationalInsightsWorkspace -ResourceGroupName DetectionWorkshop | Select-Object Name
             ```
 
-            !!! summary "Sample result"
+            !!! summary "Sample results"
 
                 ```powershell
                 Name
@@ -267,7 +275,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
             Get-AzStorageAccount -ResourceGroupName DetectionWorkshop
             ```
 
-            !!! summary "Sample result"
+            !!! summary "Sample results"
 
                 ```powershell
                 StorageAccountName       ResourceGroupName PrimaryLocation SkuName      Kind      AccessTier CreationTime         ProvisioningState

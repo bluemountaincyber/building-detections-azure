@@ -37,7 +37,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
 
     1. Return to your Azure Cloud Shell session (you may need to refresh the page if it timed out).
 
-    2. Discovering cloud resources in Azure is best done with the `az` command. Following the pattern of `az` - `reference name` - `command` we can programmatically interact with our cloud resources. First, verify as which user `az` is logged in to.
+    2. Discovering cloud resources in Azure is best done with the `az` command. Following the pattern of `az` - `reference name` - `command` we can programmatically interact with our cloud resources. First, verify which user the `az` tool is logged in with.
 
         ```powershell
         az account show | jq .user
@@ -53,7 +53,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
             }
             ```
 
-    3. Now to our storage accounts in our deployed resource group. We pipe the result to jq and only want to see the `name` values of the returning items.
+    3. Now to your storage account in your **DetectionWorkshop** resource group. We pipe the result to jq and only want to see the `name` values of the returning items.
 
         ```powershell
         az storage account list --resource-group 'DetectionWorkshop' | jq .[].name 
@@ -65,9 +65,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
             "proddatadj35l13m5693m5" 
             ```
 
-        You should see a storage account beginning with `proddata` followed by some randomized numbers and lowercase characters. The storage account name is randomized for every run of the deployment script because storage account name need to be *GLOBALLY* unique.
-        
-        You want to store the name of your storage account (pun intended) in a variable to make the next steps easier to execute.
+    4.  You should see a storage account beginning with `proddata` followed by some randomized numbers and lowercase characters. The storage account name is randomized for every run of the deployment script because storage account name need to be *GLOBALLY* unique. You want to store the name of your storage account (pun intended) in a variable to make the next steps easier to execute.
 
         ```powershell
         Write-Output ($storageAccount = az storage account list --resource-group 'DetectionWorkshop' | jq -r '.[] | select(.name | startswith("proddata")) | .name' ) 
@@ -79,7 +77,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
             proddatadj35l13m5693m5 
             ```
 
-    4. So, what content awaits us in this storage account?   
+    5. So, what content awaits us in this storage account?   
 
         ```powershell
         az storage container list --account-name $storageAccount --auth-mode login | jq .
@@ -138,7 +136,7 @@ Using the Azure Cloud Shell, perform reconnaissance of the storage account and t
             ]
             ```
 
-    5. Looking at the `name` values here: `hr-documents` and *`secretdata`*? I wonder what´s in there. Let us list the content of those containers. 
+    5. Looking at the `name` values here: `hr-documents` and `secretdata`? I wonder what´s in those containers...Let's list the content of those containers. 
 
         ```powershell
         az storage blob list --account-name $storageAccount --container 'hr-documents' --auth-mode login | jq .[].name
