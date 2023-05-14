@@ -173,7 +173,7 @@ That certainly looks like something an adversary could not leave untouched. And 
     1. Downloading can be easily achieved with the `az` command and the right parameters. For the purpose of this workshop we want to make sure we use our Azure AD User Account for authentication.   
 
         ```bash
-        az storage blob download --account-name $storageAccount --container-name 'hr-documents' --name 'job-posting-personalassistent-draft.txt' --file './ex3-hr-data-job-posting-personalassistent-draft.txt' --auth-mode login | jq . ; az storage blob download --account-name $storageAccount --container-name 'hr-documents' --name 'job-posting-secops-azure-draft.txt' --file './ex3-hr-documents-job-posting-secops-azure-draft.txt' --auth-mode login | jq . ;az storage blob download --account-name $storageAccount --container-name 'secretdata' --name 'final-instructions.txt' --file './ex3-secretdata-final-instructions.txt' --auth-mode login | jq .
+        az storage blob download --account-name $storageAccount --container-name 'hr-documents' --name 'job-posting-personalassistent-draft.txt' --file '~/ex3-hr-data-job-posting-personalassistent-draft.txt' --auth-mode login | jq . ; az storage blob download --account-name $storageAccount --container-name 'hr-documents' --name 'job-posting-secops-azure-draft.txt' --file '~/ex3-hr-documents-job-posting-secops-azure-draft.txt' --auth-mode login | jq . ;az storage blob download --account-name $storageAccount --container-name 'secretdata' --name 'final-instructions.txt' --file '~/ex3-secretdata-final-instructions.txt' --auth-mode login | jq .
         ```
 
         ??? summary "Sample result"
@@ -250,7 +250,7 @@ That certainly looks like something an adversary could not leave untouched. And 
     2. Just one more step and we can see what the final instructions are!
 
         ```powershell
-        Get-Content ./ex3-secretdata-final-instructions.txt 
+        Get-Content ~/ex3-secretdata-final-instructions.txt 
         ```
 
         ??? summary "Sample result"
