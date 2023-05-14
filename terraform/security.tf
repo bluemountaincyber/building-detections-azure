@@ -33,15 +33,16 @@ resource "azurerm_sentinel_log_analytics_workspace_onboarding" "onboarding" {
 }
 
 resource "azurerm_sentinel_alert_rule_scheduled" "analytic" {
-  name                       = "saBlobReadSensitive"
+  name                       = "4f752c74-b7a6-47f0-b952-7dcb02cb7f14"
   log_analytics_workspace_id = azurerm_sentinel_log_analytics_workspace_onboarding.onboarding.workspace_id
-  display_name               = "Detects when a file in a sensitive Blob Storage location is read. This can indicate stolen user credential or an insider threat. False-positives can be triggered by legitimate file access operations."
+  description                = "Backup Rule - Detects when a file in a sensitive Blob Storage location is read. This can indicate stolen user credential or an insider threat. False-positives can be triggered by legitimate file access operations."
+  display_name               = "BACKUP - StorageAccounts - BlobRead operation on sensitive file detected"
   severity                   = "Medium"
   query                      = <<QUERY
 StorageBlobLogs
-| where AccountName == "productiondatamain"
+| where AccountName startswith "proddata"
 | where OperationName == "GetBlob"
-| where ObjectKey startswith "/productiondatamain/secretdata/"
+| where ObjectKey endswith "final-instructions.txt"
 | extend AttackerIP = split(CallerIpAddress,':')[0]
 | sort by TimeGenerated desc
 QUERY
