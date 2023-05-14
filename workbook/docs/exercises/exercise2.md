@@ -72,7 +72,7 @@ In our case, we could make due with only the `StorageRead` log category, but let
     
         !!! note
     
-        Should you not see the storage account, make sure that no filter is applied for **Subscription**, **Resource group**, or **Location**.
+            Should you not see the storage account, make sure that no filter is applied for **Subscription**, **Resource group**, or **Location**.
     
         ![](../img/13.png ""){: class="w600" }
 
