@@ -3,7 +3,7 @@ output "sp_tenant_id" {
 }
 
 output "sp_client_id" {
-  value = azuread_application.storage_manager.object_id
+  value = azuread_application.storage_manager.application_id
 }
 
 output "sp_password" {
