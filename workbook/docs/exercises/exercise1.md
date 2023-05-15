@@ -101,9 +101,9 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
 
             UnixMode   User             Group                 LastWriteTime           Size Name
             --------   ----             -----                 -------------           ---- ----
-            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 ressources
-            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 terraform
-            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 workbook
+            drwxr-xr-x ryan             ryan                5/15/2023 00:00           4096 ressources
+            drwxr-xr-x ryan             ryan                5/15/2023 00:00           4096 terraform
+            drwxr-xr-x ryan             ryan                5/15/2023 00:00           4096 workbook
             ```
 
     4. Move into the `terraform` directory to prepare for the deployment.
@@ -120,13 +120,13 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
 
             UnixMode   User             Group                 LastWriteTime           Size Name
             --------   ----             -----                 -------------           ---- ----
-            drwxr-xr-x ryan             ryan                5/14/2023 15:17           4096 resources
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17            434 main.tf
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17            289 outputs.tf
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17           2477 security.tf
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17           2058 storage.tf
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17            824 users.tf
-            -rw-r--r-- ryan             ryan                5/14/2023 15:17            331 variables.tf
+            drwxr-xr-x ryan             ryan                5/15/2023 00:00           4096 resources
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00            434 main.tf
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00            294 outputs.tf
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00           2775 security.tf
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00           2062 storage.tf
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00           1355 users.tf
+            -rw-r--r-- ryan             ryan                5/15/2023 00:00            331 variables.tf
             ```
 
 ### Challenge 3: Deploy Workshop IaC Resources
@@ -214,7 +214,7 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
 
             <snip>
 
-            Apply complete! Resources: 17 added, 0 changed, 0 destroyed.
+            Apply complete! Resources: 19 added, 0 changed, 0 destroyed.
 
             Outputs:
 

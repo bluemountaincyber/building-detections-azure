@@ -36,15 +36,29 @@ Use Microsoft Sentinel to explore the data being forwarded from our blob storage
 
 ??? cmd "Solution"
 
-    1. From the Azure Portal homepage, type `Sentinel` in the searchbox at the top of the portal and select 'Microsoft Sentinel' under the 'Services' category. Select the instance based on the `securitymonitoring` Log Analytics workspace.
-        
-        ![](../img/placeholder.png ""){: class="w600" }
+    1. From the Azure Portal homepage, type `Sentinel` in the searchbox at the top of the portal (1) and select **Microsoft Sentinel** under the **Services** category (2).
 
-    2. In the ´General´ section on the left panel, select the `Logs` blade. Should you be greeted by the `Queries` dialog, deactivate the `Always show Queries` toggle and close the dialog with the `X` in the upper right corner.  
+        ![](../img/20.png ""){: class="w400" } 
+    
+    2. On the next page, select the instance based on the **securitymonitoring** Log Analytics workspace.
         
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/21.png ""){: class="w600" }
 
-    3. With the `Logs` blade in front of you, we need to find the table in which our blob storage events are stored. Expand the `Schema and Filter` bar on the left of the main panel. Select the `Tables` tab, open the `LogManagement` node and look for the aptly named `StorageBlobLogs` table.
+    3. In the **General** section on the left panel, select the **Logs** blade.
+
+        ![](../img/22.png ""){: class="w400" }
+
+        !!! note 
+        
+            If you are greeted by the **Queries** dialog, deactivate the **Always show Queries** toggle (1) and close the dialog with the `X` in the upper right corner (2).  
+        
+            ![](../img/23.png ""){: class="w600" }
+
+    4. With the **Logs** blade in front of you, we need to find the table in which our blob storage events are stored. Begin by expanding the **Schema and Filter** bar on the left of the main panel. 
+
+        ![](../img/24.png ""){: class="w200" }
+    
+    5. With the pane expanded, select the **Tables** tab, open the **LogManagement** node and look for the aptly named **StorageBlobLogs** table.
         
         ![](../img/placeholder.png ""){: class="w600" }
     
