@@ -35,7 +35,7 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
 
     1. Return to your Azure Cloud Shell session (you may need to refresh the page if it timed out).
 
-    2. Terraform created the service principal `Storage Manager` with the `Storage Blob Data Reader` role on our storage account - and we´ll use this account as our attacker. We retrieve the credentials for the principal from terraform and store them in powershell variables for further use. For his to work we must run it from the terraform folder.
+    2. Terraform created the service principal **Storage Manager** with the **Storage Blob Data Reader** role on our storage account - and we´ll use this account as our attacker. We retrieve the credentials for the principal from terraform and store them in powershell variables for further use. For his to work we must run it from the terraform folder.
 
         ```powershell
         cd ~/building-detections-azure/terraform/
@@ -85,7 +85,7 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
             secretdata
             ```
 
-    5. Now run the following command which creates a folder in your homedirectory called `exercise5_loot` and downloads all the blobs from the `hr-document` and `secretdata`.
+    5. Now run the following command which creates a folder in your home directory called **exercise5_loot** and downloads all the blobs from the **hr-document** and **secretdata**.
 
         ```powershell
         New-Item -Path '~/' -Name "exercise5_loot" -ItemType "directory"; $containerNamesArray | foreach-object {az storage blob download-batch --account-name $storageAccount --source $_ --destination ~/exercise5_loot/ --overwrite true --auth-mode login | jq .}
@@ -138,11 +138,11 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
 
 ??? cmd "Solution"
 
-    1. Navigate to the Incident blade in Sentinel, located in the `Threat management` section. You should see an incident created by our Scheduled Query rule. You might have multiple, should you have run the previous script multiple times. Clicking on any of them will bring out the incident overview to your right. Click on the `View full details` button.    
+    1. Navigate to the Incident blade in Sentinel, located in the **Threat management** section. Depending on your overall pace/timing, you might see an Incident created by our Log Analytics rule before we added its automation to it. We are not interested in this one, as it does not have our tasks! Check the **Created time** to see if it´s an older incident or not. Select the newest on by clicking it. That will bring out the incident overview to your right. Click on the **View full details** button.    
 
         ![](../img/placeholder.png ""){: class="w600" }
 
-        ??? note "No incident visible?"
+        ??? note "No incident from our re-test visible?"
             
             Remember that at least 5 minutes need to pass between your action and the run the Scheduled Query rule for it to be able to find the events.
 
@@ -159,25 +159,33 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
 
             When the event is at least 5 minutes old, you can re-set the schedule of the rule. The easiest way to achieve this is by disabling and re-enabling the rule. Navigate to the Analytics blade, click on the three dots to the right of your rule and select Disable/Enable - an incident should pop-up a few seconds later.
 
-            ![](../img/ex5-ch3-reboot.gif ""){: class="w500" }
+            ??? info "The ol´ reliable"
+                ![](../img/ex5-ch3-reboot-0.gif ""){: class="w500" }
 
     2. Walking trough all the different components and aspects of the Incident details would be a full-day workshop itself, so we will focus on two aspects: tasks and entities. Should you be presented with the "Try the new experience" incident view, please turn it of for the following steps.
 
         ![](../img/placeholder.png ""){: class="w600" }
 
-    3. Let´s first see if our Automation added our investigation steps. Locate the `Tasks` section on the left pane and click on `View full details`. A new pane on your right will appear, showing your tasks for this incident type.
+    3. Let´s first see if our Automation added our investigation steps. Locate the **Tasks** section on the left pane and click on **View full details**. A new pane on your right will appear, showing your tasks for this incident type.
 
         Even simple information like those three steps can already help immensely when dealing with incidents!
 
         ![](../img/placeholder.png ""){: class="w600" }
 
-    4. Now with some guidance provided to us, we´ll check if our IP and Azure resource mapping was successful and how it might help us investigate this incident. In the incident details view, locate the `Entities` section on the left pane and select the IP. You will be brought to a new blade with information about the IP used in our attack.
+    4. Now with some guidance provided to us, we´ll check if our IP and Azure resource mapping was successful and how it might help us investigate this incident. In the incident details view, locate the **Entities** section on the left pane and select the **IP**. You will be brought to a new blade with information about the IP used in our attack.
 
         ![](../img/placeholder.png ""){: class="w600" }
 
-        This kind of view, where information from different sources about an entity is presented, is an efficient method to establish situational awareness and makes `pivoting` while investigating a lot easier!  
+        This kind of view, where information from different sources about an entity is presented, is an efficient method to establish situational awareness and makes **pivoting** while investigating a lot easier!  
 
-    5. Time to return to the incident. The easiest (and reliable) way to navigate back is by using the "breadcrumbs" in the upper left corner. Click on the last item `incident` and you will be at the incident detail view again.
+        ??? note "No entities visible?"
+
+            Even though we can see the Incident has been created, Sentinel often still runs operations such as the entity mapping and Automations in the background or has those results not yet surfaced. Testing showed that going back to the Incident blade in Sentinel and re-selecting the incident is more reliable then simply refreshing the view while being in the full incident details.                  
+
+            ??? info "60% of the time, it works every time"
+                ![](../img/ex5-ch3-reboot-1.gif ""){: class="w500" }
+
+    5. Time to return to the incident. The easiest (and reliable) way to navigate back is by using the "breadcrumbs" in the upper left corner. Click on the last item **incident** and you will be at the incident detail view again.
 
         ![](../img/placeholder.png ""){: class="w600" }
 

@@ -62,6 +62,40 @@ A diagnostic setting, in Microsoft's own words, "specifies a list of categories 
 
 In our case, we could make due with only the `StorageRead` log category, but let us collect all the logs and metrics of this resource so we can see everything that is happening. To make searching and alerting on those events easier, we will send them into a **Log Analytics workspace**. Let´s configure this via the Azure Portal Graphical User Interface (GUI).
 
+??? danger ""It´s best effort after all" - Cloud providers, probably"
+
+    There is a good chance that our freshly created resources can not yet be used in diagnostic settings in the Azure Portal - in our testing it can take up to 30 minutes for both the **Storage Account** and **Log Analytics workspace** be visible in the diagnostic settings wizard.
+
+    ??? warning "30 minutes?!"
+        ![](../img/ex2-ch2-notimeforthat.gif ""){: class="w600" }             
+
+    Should you not be able to configure the diagnostic settings as in the provided Azure Portal GUI solution and don´t want to wait, feel free to use the following command from the Azure Cloud Shell. However, make sure you read through the instructions for the Azure Portal to understand how to apply those settings via GUI!
+
+    ??? cmd "Configuring **diagnostic settings** via Azure Cloud Shell"
+
+        ```Powershell
+        $blobServicesId = (Get-AzStorageAccount -ResourceGroupName DetectionWorkshop).id + "/blobServices/default"
+        $logAnalyticsWorkspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName DetectionWorkshop).ResourceId
+        $DiagnosticSettingName = "AllEvents-LogAnalytics"
+        $metric = @()
+        $log = @()
+        $metric += New-AzDiagnosticSettingMetricSettingsObject -Enabled $true -Category 'Transaction'
+        $log +=  New-AzDiagnosticSettingLogSettingsObject -Enabled $true -Category 'StorageRead'
+        $log +=  New-AzDiagnosticSettingLogSettingsObject -Enabled $true -Category 'StorageWrite'
+        $log +=  New-AzDiagnosticSettingLogSettingsObject -Enabled $true -Category 'StorageDelete'
+        New-AzDiagnosticSetting -Name $DiagnosticSettingName -ResourceId $blobServicesId -WorkspaceId $logAnalyticsWorkspaceId -Log $log -Metric $metric -Verbose
+        ```
+
+        ??? summary "Expected result"
+
+            ```
+            VERBOSE: Performing the operation "New-AzDiagnosticSetting_CreateExpanded" on target "Call remote 'DiagnosticSettingsCreateOrUpdate' operation".
+
+            Name
+            ----
+            AllEvents-LogAnalytics
+            ```
+
 ??? cmd "Solution"
 
     1. From the Azure Portal homepage, type `Storage accounts` in the searchbox (1) at the top of the portal and select **Storage Accounts** (2) under the 'Services' category.
