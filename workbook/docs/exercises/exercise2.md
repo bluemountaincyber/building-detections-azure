@@ -1,13 +1,3 @@
-## DevNotes
-
-### ToDo
-- [X] Write Objective text
-- [x] Write Exercise text
-- [ ] ~~Provide Commands / Scripts~~
-- [ ] Provide Screenshots
-
------
-
 # Exercise 2: Configuring Logging
 
 <!-- markdownlint-disable MD007 MD033-->

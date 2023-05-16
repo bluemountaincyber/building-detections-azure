@@ -1,13 +1,3 @@
-## DevNotes
-
-### ToDo
-- [X] Write Objective text
-- [X] Write Exercise text
-- [X] Provide Commands / Scripts
-- [ ] Provide Screenshots
-
------
-
 # Exercise 5: Testing the Detection Rule & Automation
 
 <!-- markdownlint-disable MD007 MD033-->
