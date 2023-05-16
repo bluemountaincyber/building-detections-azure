@@ -16,4 +16,3 @@ nav:
     - 'Exercise 4: Creating the Detection Rule & Automation': 'exercises/exercise4.md'
     - 'Exercise 5: Testing the Detection Rule & Automation': 'exercises/exercise5.md'
     - 'Exercise 6: Tearing Down Resources': 'exercises/exercise6.md'
-  - DEV: 'markdown-snippets.md'    

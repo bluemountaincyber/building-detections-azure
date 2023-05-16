@@ -45,7 +45,7 @@ resource "azurerm_storage_container" "secret_data" {
 resource "azurerm_storage_blob" "final_instructions" {
   name                   = "final-instructions.txt"
   storage_account_name   = azurerm_storage_account.prod_data.name
-  storage_container_name = azurerm_storage_container.hr_docs.name
+  storage_container_name = azurerm_storage_container.secret_data.name
   type                   = "Block"
   source                 = "${path.module}/resources/StorageAccount/secretdata/final-instructions.txt"
 }

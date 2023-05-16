@@ -4,3 +4,7 @@
     --sans-primary-text-color: #ffffff;
     --sans-secondary-text-color: #eeeeee;
 }
+
+img {
+    border-style: none
+}

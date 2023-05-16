@@ -3,3 +3,7 @@
 .terraform*
 terraform.**
 .DS_Store
+workbook/.venv*
+workbook/.venv/**
+site/**
+site
