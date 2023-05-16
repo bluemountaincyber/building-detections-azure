@@ -140,6 +140,14 @@ Use the appropriate Terraform commands to deploy the resources in each `.tf` fil
 - [ ] Log Analytics Workspace named `securitymonitoring`
 - [ ] Storage Account beginning with the name `proddata`
 
+??? warning "If you have multiple Azure subscriptions..."
+
+    If you have more than one Azure subscription, make sure to configure the Azure CLI (which is where Terraform pulls its information for deployment) to the correct subscription you want your resources deployed to. You can do this by running the following command (replacing `PLACEHOLDER` with the name of your subscription):
+
+    ```powershell
+    az account set --subscription "PLACEHOLDER"
+    ```
+
 ??? cmd "Solution"
 
     1. Begin downloading the Terraform provider capabilities and setup of the Terraform local files and directories by running Terraform with the `init` argument.
