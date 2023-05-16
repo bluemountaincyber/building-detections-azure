@@ -22,7 +22,7 @@ Log back into your **Cloud Shell** session and use Terraform with the `destroy a
 
         You will be prompted to visit https://microsoft.com/devicelogin and provide the code shown in the Azure Cloud Shell to authenticate yourself.
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/70.png ""){: class="w400" }
 
         ??? summary "Sample results"
 

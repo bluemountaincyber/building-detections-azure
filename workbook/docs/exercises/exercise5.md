@@ -142,6 +142,10 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
 
         ![](../img/63.png ""){: class="w250" }
 
+        ![](../img/64.png ""){: class="w500" }
+
+        ![](../img/65.png ""){: class="w500" }
+
         ??? note "No incident from our re-test visible?"
             
             Remember that at least 5 minutes need to pass between your action and the run the Scheduled Query rule for it to be able to find the events.
@@ -162,19 +166,19 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
             ??? info "The ol´ reliable"
                 ![](../img/ex5-ch3-reboot-0.gif ""){: class="w500" }
 
-    2. Walking trough all the different components and aspects of the Incident details would be a full-day workshop itself, so we will focus on two aspects: tasks and entities. Should you be presented with the "Try the new experience" incident view, please turn it of for the following steps.
+    2. Walking trough all the different components and aspects of the Incident details would be a full-day workshop itself, so we will focus on two aspects: tasks and entities. Should you be presented with the "Try the new experience" incident view, please turn it off for the following steps.
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/66.png ""){: class="w600" }
 
     3. Let´s first see if our Automation added our investigation steps. Locate the **Tasks** section on the left pane and click on **View full details**. A new pane on your right will appear, showing your tasks for this incident type.
 
         Even simple information like those three steps can already help immensely when dealing with incidents!
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/67.png ""){: class="w400" }
 
     4. Now with some guidance provided to us, we´ll check if our IP and Azure resource mapping was successful and how it might help us investigate this incident. In the incident details view, locate the **Entities** section on the left pane and select the **IP**. You will be brought to a new blade with information about the IP used in our attack.
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/68.png ""){: class="w400" }
 
         This kind of view, where information from different sources about an entity is presented, is an efficient method to establish situational awareness and makes **pivoting** while investigating a lot easier!  
 
@@ -187,9 +191,9 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
 
     5. Time to return to the incident. The easiest (and reliable) way to navigate back is by using the "breadcrumbs" in the upper left corner. Click on the last item **incident** and you will be at the incident detail view again.
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/69.png ""){: class="w300" }
 
-        Feel free to look around the various section, features and the Azure resource entity on your own.    
+        Feel free to look around the various sections, features, and the Azure resource entity on your own.    
 
 ## Conclusion
 
