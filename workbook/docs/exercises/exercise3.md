@@ -1,13 +1,3 @@
-## DevNotes
-
-### ToDo
-- [X] Write Objective text
-- [X] Write Exercise text
-- [X] Provide Commands / Scripts
-- [X] Provide Screenshots
-
------
-
 # Exercise 3: Creating True-Positive Events 
 
 <!-- markdownlint-disable MD033-->
