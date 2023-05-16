@@ -134,13 +134,13 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
 
 ### Challenge 2: Review the Sentinel Incident
 
-Review the Sentinel Incident created by our Scheduled Rule. Verify the true-positive, that both Entities have been identified and that the Automation added the investigation tasks.   
+Review the Sentinel Incident created by our Scheduled Rule. Verify the true-positive, that both Entities have been identified, and that the Automation added the investigation tasks.   
 
 ??? cmd "Solution"
 
     1. Navigate to the Incident blade in Sentinel, located in the **Threat management** section. Depending on your overall pace/timing, you might see an Incident created by our Log Analytics rule before we added its automation to it. We are not interested in this one, as it does not have our tasks! Check the **Created time** to see if it´s an older incident or not. Select the newest on by clicking it. That will bring out the incident overview to your right. Click on the **View full details** button.    
 
-        ![](../img/placeholder.png ""){: class="w600" }
+        ![](../img/63.png ""){: class="w250" }
 
         ??? note "No incident from our re-test visible?"
             
@@ -157,7 +157,7 @@ Review the Sentinel Incident created by our Scheduled Rule. Verify the true-posi
             | sort by TimeGenerated desc
             ```
 
-            When the event is at least 5 minutes old, you can re-set the schedule of the rule. The easiest way to achieve this is by disabling and re-enabling the rule. Navigate to the Analytics blade, click on the three dots to the right of your rule and select Disable/Enable - an incident should pop-up a few seconds later.
+            When the event is at least 5 minutes old, you can reset the schedule of the rule. The easiest way to achieve this is by disabling and re-enabling the rule. Navigate to the Analytics blade, click on the three dots to the right of your rule and select Disable/Enable - an incident should pop-up a few seconds later.
 
             ??? info "The ol´ reliable"
                 ![](../img/ex5-ch3-reboot-0.gif ""){: class="w500" }
