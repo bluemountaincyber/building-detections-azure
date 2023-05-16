@@ -35,7 +35,7 @@ Perform the same attack as before from the Azure Cloud Shell, but use a service 
 
     1. Return to your Azure Cloud Shell session (you may need to refresh the page if it timed out).
 
-    2. Terraform created the service principal **Storage Manager** with the **Storage Blob Data Reader** role on our storage account - and we´ll use this account as our attacker. We retrieve the credentials for the principal from terraform and store them in powershell variables for further use. For his to work we must run it from the terraform folder.
+    2. Terraform created the service principal called **Storage Manager** with the **Storage Blob Data Reader** role on our storage account. We´ll use this account as our attacker. We retrieve the credentials for the principal from terraform and store them in powershell variables for further use. For this to work, we must run it from the terraform folder.
 
         ```powershell
         cd ~/building-detections-azure/terraform/
