@@ -131,7 +131,7 @@ Now that you are in a **Cloud Shell** session, you will need to download this co
 
 ### Challenge 3: Deploy Workshop IaC Resources
 
-Finally, you have all of the components needed to deploy the resources in your AWS account.
+Finally, you have all of the components needed to deploy the resources in your Azure subscription.
 
 Use the appropriate Terraform commands to deploy the resources in each `.tf` file. Ensure that all worked properly by searching for the following Azure resources using the Az PowerShell cmdlets (also provided in Cloud Shell):
 
